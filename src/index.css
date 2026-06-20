@@ -2,5 +2,20 @@
 @tailwind components;
 @tailwind utilities;
 
-html, body, #root { height: 100%; margin: 0; overflow: hidden; }
-body { font-family: 'Inter', sans-serif; }
+html, body, #root {
+  height: 100%;
+  margin: 0;
+}
+
+/* Desktop presentation: disable scroll on the outer shell;
+   MobileView handles its own overflow internally */
+body {
+  font-family: 'Inter', sans-serif;
+  overflow: hidden;
+}
+
+@media (max-width: 1023px) {
+  body {
+    overflow: hidden; /* DeckContainer's mobile wrapper owns the scroll */
+  }
+}
