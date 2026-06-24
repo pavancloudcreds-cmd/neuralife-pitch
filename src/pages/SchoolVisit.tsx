@@ -1,18 +1,22 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import SVHeader from './school-visit/components/SVHeader';
-import Section01_Opening from './school-visit/sections/Section01_Opening';
-import Section02_WhoWeAre from './school-visit/sections/Section02_WhoWeAre';
-import Section03_Problem from './school-visit/sections/Section03_Problem';
-import Section04_WhatWeBuilding from './school-visit/sections/Section04_WhatWeBuilding';
-import Section05_Progress from './school-visit/sections/Section05_Progress';
-import Section06_ForYourSchool from './school-visit/sections/Section06_ForYourSchool';
-import Section07_Feedback from './school-visit/sections/Section07_Feedback';
-import Section08_ConsentForm from './school-visit/sections/Section08_ConsentForm';
+import Section01_Intro      from './school-visit/sections/Section01_Intro';
+import Section02_Principal  from './school-visit/sections/Section02_Principal';
+import Section03_Teacher    from './school-visit/sections/Section03_Teacher';
+import Section04_Accountant from './school-visit/sections/Section04_Accountant';
+import Section05_Demo       from './school-visit/sections/Section05_Demo';
+import Section06_YourSchool from './school-visit/sections/Section06_YourSchool';
+import Section07_Consent    from './school-visit/sections/Section07_Consent';
 import { SV } from './school-visit/tokens';
 
 const SECTION_LABELS = [
-  'Opening', 'Who We Are', 'The Problem', 'What We Built',
-  'Progress', 'For Your School', 'Questions', 'Stay Connected',
+  'Introduction',
+  'Principal Questions',
+  'Teacher Questions',
+  'Accountant Questions',
+  'Targeted Demo',
+  'Your School',
+  'Stay Connected',
 ];
 
 function NavDot({ label, active, onClick }: { label: string; active: boolean; onClick: () => void }) {
@@ -26,23 +30,17 @@ function NavDot({ label, active, onClick }: { label: string; active: boolean; on
     >
       {hovered && (
         <div style={{
-          position: 'absolute',
-          right: 22,
-          background: 'rgba(0,0,0,0.7)',
-          color: '#fff',
-          fontFamily: 'Inter, sans-serif',
-          fontSize: 12,
-          padding: '4px 8px',
-          borderRadius: 6,
-          whiteSpace: 'nowrap',
-          pointerEvents: 'none',
+          position: 'absolute', right: 22,
+          background: 'rgba(0,0,0,0.72)', color: '#fff',
+          fontFamily: 'Inter, sans-serif', fontSize: 12,
+          padding: '4px 10px', borderRadius: 6,
+          whiteSpace: 'nowrap', pointerEvents: 'none',
         }}>
           {label}
         </div>
       )}
       <div style={{
-        width: active ? 12 : 8,
-        height: active ? 12 : 8,
+        width: active ? 12 : 8, height: active ? 12 : 8,
         borderRadius: '50%',
         background: active ? SV.teal : 'transparent',
         border: active ? `2px solid ${SV.teal}` : `2px solid ${SV.textMuted}`,
@@ -53,20 +51,19 @@ function NavDot({ label, active, onClick }: { label: string; active: boolean; on
   );
 }
 
+const TOTAL = 7;
+
 export default function SchoolVisit() {
   const openingRef = useRef<HTMLElement>(null);
-  // Single mutable ref holds all 8 section DOM nodes
-  const sectionNodes = useRef<(HTMLElement | null)[]>(Array(8).fill(null));
+  const sectionNodes = useRef<(HTMLElement | null)[]>(Array(TOTAL).fill(null));
   const [activeSection, setActiveSection] = useState(0);
 
-  // Allow body scroll for this page, restore on unmount
   useEffect(() => {
     const prev = document.body.style.overflow;
     document.body.style.overflow = 'auto';
     return () => { document.body.style.overflow = prev; };
   }, []);
 
-  // IntersectionObserver to track active section
   useEffect(() => {
     const nodes = sectionNodes.current;
     const obs = new IntersectionObserver(
@@ -78,7 +75,7 @@ export default function SchoolVisit() {
           }
         });
       },
-      { threshold: 0.35 }
+      { threshold: 0.3 }
     );
     nodes.forEach(n => { if (n) obs.observe(n); });
     return () => obs.disconnect();
@@ -87,7 +84,6 @@ export default function SchoolVisit() {
   const setRef = useCallback((i: number) => (el: HTMLElement | null) => {
     sectionNodes.current[i] = el;
     if (i === 0 && el) {
-      // also sync the openingRef for SVHeader's IntersectionObserver
       (openingRef as React.MutableRefObject<HTMLElement | null>).current = el;
     }
   }, []);
@@ -100,36 +96,26 @@ export default function SchoolVisit() {
     <div style={{ background: SV.pageBg, position: 'relative' }}>
       <SVHeader openingSectionRef={openingRef} />
 
-      <Section01_Opening ref={setRef(0)} />
-      <div ref={setRef(1)}><Section02_WhoWeAre /></div>
-      <div ref={setRef(2)}><Section03_Problem /></div>
-      <div ref={setRef(3)}><Section04_WhatWeBuilding /></div>
-      <div ref={setRef(4)}><Section05_Progress /></div>
-      <div ref={setRef(5)}><Section06_ForYourSchool /></div>
-      <div ref={setRef(6)}><Section07_Feedback /></div>
-      <div ref={setRef(7)}><Section08_ConsentForm /></div>
+      <Section01_Intro      ref={setRef(0)} />
+      <div ref={setRef(1)}><Section02_Principal /></div>
+      <div ref={setRef(2)}><Section03_Teacher /></div>
+      <div ref={setRef(3)}><Section04_Accountant /></div>
+      <div ref={setRef(4)}><Section05_Demo /></div>
+      <div ref={setRef(5)}><Section06_YourSchool /></div>
+      <div ref={setRef(6)}><Section07_Consent /></div>
 
       {/* Fixed right-side nav dots — hidden on mobile */}
-      <div
-        className="hidden-mobile-nav"
-        style={{
-          position: 'fixed',
-          right: 20,
-          top: '50%',
-          transform: 'translateY(-50%)',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: 10,
-          zIndex: 200,
-        }}
-      >
+      <div className="sv-nav-dots" style={{
+        position: 'fixed', right: 20, top: '50%', transform: 'translateY(-50%)',
+        display: 'flex', flexDirection: 'column', gap: 10, zIndex: 200,
+      }}>
         {SECTION_LABELS.map((label, i) => (
           <NavDot key={label} label={label} active={activeSection === i} onClick={() => scrollTo(i)} />
         ))}
       </div>
 
       <style>{`
-        @media (max-width: 767px) { .hidden-mobile-nav { display: none !important; } }
+        @media (max-width: 767px) { .sv-nav-dots { display: none !important; } }
       `}</style>
     </div>
   );

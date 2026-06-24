@@ -14,7 +14,7 @@ const chips = [
 const contactRows = [
   { icon: '📱', text: '+91 91824 42102' },
   { icon: '🔗', text: 'in/pavankumar19992208' },
-  { icon: '🎓', text: 'SPARK 5.0 Participant — RTIH' },
+  { icon: '🎓', text: 'SPARK 2.0 Participant — RTIH' },
 ];
 
 export default function Section02_WhoWeAre() {
