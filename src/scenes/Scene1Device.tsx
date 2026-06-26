@@ -56,78 +56,30 @@ const AI_MODELS = [
   },
 ];
 
-// ---------- 2D SVG views ----------
+// ---------- 2D image views — actual device renders ----------
 
-function DeviceFront() {
-  return (
-    <svg viewBox="0 0 280 380" width="280" height="380" style={{ display: 'block' }}>
-      <defs>
-        <linearGradient id="bodyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#2a2a2e"/>
-          <stop offset="100%" stopColor="#1c1c1e"/>
-        </linearGradient>
-      </defs>
-      {/* Body */}
-      <rect x="0" y="0" width="280" height="380" rx="20" fill="url(#bodyGrad)"/>
-      {/* Corner bumpers */}
-      {[[0,0],[252,0],[0,352],[252,352]].map(([x,y],i) => (
-        <rect key={i} x={x} y={y} width="28" height="28" rx="6" fill="#111111"/>
-      ))}
-      {/* Display bezel */}
-      <rect x="10" y="10" width="260" height="360" rx="14" fill="#0a0a0a"/>
-      {/* Screen area */}
-      <rect x="14" y="14" width="252" height="352" rx="10" fill="#000000"/>
-      {/* Boot rings */}
-      {[40,65,90].map((r,i) => (
-        <circle key={i} cx="140" cy="160" r={r} fill="none" stroke="rgba(255,255,255,0.5)" strokeWidth="0.7"/>
-      ))}
-      {/* NeuraOS text */}
-      <text x="140" y="225" textAnchor="middle" fontFamily="Poppins, sans-serif" fontWeight="bold" fontSize="18" fill="white">NeuraOS</text>
-      <text x="140" y="248" textAnchor="middle" fontFamily="Inter, sans-serif" fontSize="11" fill="rgba(148,163,184,0.7)">Initialising...</text>
-      {/* Progress bar */}
-      <rect x="80" y="310" width="120" height="2" fill="rgba(255,255,255,0.08)"/>
-      <rect x="80" y="310" width="36" height="2" fill="#0d9488"/>
-      {/* Home button */}
-      <circle cx="140" cy="365" r="4" fill="rgba(255,255,255,0.3)"/>
-      {/* LED */}
-      <circle cx="268" cy="12" r="3.5" fill="#34D399"/>
-    </svg>
-  );
-}
+const BASE = import.meta.env.BASE_URL;
 
-function DeviceBack() {
+function Device2D({ face }: { face: 'front' | 'back' }) {
   return (
-    <svg viewBox="0 0 280 380" width="280" height="380" style={{ display: 'block' }}>
-      <defs>
-        <linearGradient id="bodyGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#2a2a2e"/>
-          <stop offset="100%" stopColor="#1c1c1e"/>
-        </linearGradient>
-        <linearGradient id="goldText" x1="0%" y1="0%" x2="100%" y2="0%">
-          <stop offset="0%" stopColor="#8B6B1F"/>
-          <stop offset="50%" stopColor="#F5D67D"/>
-          <stop offset="100%" stopColor="#8B6B1F"/>
-        </linearGradient>
-        <pattern id="lines" width="8" height="8" patternUnits="userSpaceOnUse">
-          <line x1="0" y1="0" x2="8" y2="0" stroke="rgba(255,255,255,0.04)" strokeWidth="0.5"/>
-        </pattern>
-      </defs>
-      <rect x="0" y="0" width="280" height="380" rx="20" fill="url(#bodyGrad2)"/>
-      {/* Texture */}
-      <rect x="0" y="0" width="280" height="380" rx="20" fill="url(#lines)"/>
-      {/* Corner bumpers */}
-      {[[0,0],[252,0],[0,352],[252,352]].map(([x,y],i) => (
-        <rect key={i} x={x} y={y} width="28" height="28" rx="6" fill="#111111"/>
-      ))}
-      {/* Camera */}
-      <rect x="16" y="16" width="10" height="10" rx="2" fill="#0A0E1A"/>
-      <circle cx="21" cy="21" r="3" fill="#0d0d0d" stroke="#333" strokeWidth="0.5"/>
-      {/* Gold wordmark */}
-      <text x="140" y="178" textAnchor="middle" fontFamily="Poppins, sans-serif" fontWeight="800" fontSize="30" fill="url(#goldText)" letterSpacing="-0.5">NeuraLife</text>
-      <text x="140" y="202" textAnchor="middle" fontFamily="Poppins, sans-serif" fontSize="11" fill="#C9A84C" letterSpacing="5">SmartPad</text>
-      {/* USB-C */}
-      <rect x="124" y="370" width="32" height="6" rx="3" fill="#2a2a2a"/>
-    </svg>
+    <AnimatePresence mode="wait">
+      <motion.img
+        key={face}
+        src={`${BASE}assets/neurapad-${face}.png`}
+        alt={`NeuraPad ${face}`}
+        initial={{ opacity: 0, scale: 0.97 }}
+        animate={{ opacity: 1, scale: 1 }}
+        exit={{ opacity: 0, scale: 0.97 }}
+        transition={{ duration: 0.35, ease: 'easeInOut' }}
+        style={{
+          width: '100%',
+          height: '100%',
+          objectFit: 'contain',
+          display: 'block',
+          filter: 'drop-shadow(0 8px 40px rgba(0,0,0,0.7))',
+        }}
+      />
+    </AnimatePresence>
   );
 }
 
@@ -445,35 +397,32 @@ export default function Scene1Device({ onNext: _onNext }: SceneProps) {
         </div>
 
         {/* Viewer area */}
-        <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
+        <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', minHeight: 0, overflow: 'hidden' }}>
           {view === '2d' ? (
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 20 }}>
+            <div style={{
+              display: 'flex', flexDirection: 'column',
+              width: '100%', height: '100%',
+              padding: '12px 16px 8px',
+              gap: 10, minHeight: 0,
+            }}>
               {/* Face toggle */}
-              <div style={{ display: 'flex', gap: 16 }}>
+              <div style={{ display: 'flex', gap: 20, flexShrink: 0, justifyContent: 'center' }}>
                 {(['front', 'back'] as const).map(f => (
                   <button key={f} onClick={() => setFace(f)} style={{
                     background: 'none', border: 'none', cursor: 'pointer',
-                    fontFamily: "'Inter', sans-serif", fontSize: 13,
+                    fontFamily: "'Poppins', sans-serif", fontSize: 13, fontWeight: 600,
                     color: face === f ? C.tealVib : C.muted,
                     borderBottom: face === f ? `2px solid ${C.tealVib}` : '2px solid transparent',
                     paddingBottom: 4, textTransform: 'capitalize', transition: 'all 0.2s',
+                    letterSpacing: '0.05em',
                   }}>
-                    {f}
+                    {f === 'front' ? '◉ Front' : '◎ Back'}
                   </button>
                 ))}
               </div>
-              <div style={{
-                background: 'white', borderRadius: 24,
-                boxShadow: '0 0 60px rgba(0,0,0,0.6)',
-                overflow: 'hidden',
-              }}>
-                <AnimatePresence mode="wait">
-                  <motion.div key={face}
-                    initial={{ opacity: 0, rotateY: 90 }} animate={{ opacity: 1, rotateY: 0 }}
-                    exit={{ opacity: 0, rotateY: -90 }} transition={{ duration: 0.4 }}>
-                    {face === 'front' ? <DeviceFront /> : <DeviceBack />}
-                  </motion.div>
-                </AnimatePresence>
+              {/* Image fills remaining space */}
+              <div style={{ flex: 1, minHeight: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Device2D face={face} />
               </div>
             </div>
           ) : (
