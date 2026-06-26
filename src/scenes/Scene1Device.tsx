@@ -53,7 +53,7 @@ const AI_MODELS = [
   {
     id: 'HWR-1', label: 'HWR-1', fullName: 'Handwriting Recognition',
     color: '#0d9488', bg: '#E6F3F2',
-    detail: 'Reads Telugu + English handwriting\nin real-time as the student writes.\nTrains on real classroom data daily.\nAccuracy improves every week.',
+    detail: 'Reads Telugu + English handwriting\nin real-time as the student writes.\nArchitecture: CNN-GRU-CTC · 2.1M params\n8MB INT8 · <10ms · RK3566 NPU · Offline',
   },
   {
     id: 'GAP-1', label: 'GAP-1', fullName: 'Gap Analysis',
@@ -64,11 +64,6 @@ const AI_MODELS = [
     id: 'HDE', label: 'HDE', fullName: 'Hint Delivery Engine',
     color: '#7C3AED', bg: '#EDE9FE',
     detail: 'Delivers the right hint at\nthe right moment.\nNot the answer — the nudge\nthat builds real understanding.',
-  },
-  {
-    id: 'CNN-GRU', label: 'CNN-GRU-CTC', fullName: 'On-device OCR Model',
-    color: '#1D4ED8', bg: '#EFF6FF',
-    detail: '2.1M parameters · 8MB INT8\n<10ms on RK3566 NPU\nWorks completely offline\nBuilt specifically for Indian scripts.',
   },
 ];
 
