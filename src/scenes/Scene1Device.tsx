@@ -258,7 +258,7 @@ export default function Scene1Device({ onNext: _onNext }: SceneProps) {
                 style={{
                   maxWidth: '100%', maxHeight: '100%',
                   objectFit: 'contain', display: 'block',
-                  filter: 'drop-shadow(0 20px 48px rgba(0,0,0,0.13))',
+                  mixBlendMode: 'multiply',
                 }}
               />
             </AnimatePresence>
