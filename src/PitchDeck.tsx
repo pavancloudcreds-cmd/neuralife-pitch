@@ -54,7 +54,7 @@ export default function PitchDeck() {
         {String(scene + 1).padStart(2, '0')} / {String(total).padStart(2, '0')}
       </div>
 
-      {/* Main scene */}
+      {/* Main scene — starts at y=60 to clear the persistent wordmark/counter */}
       <AnimatePresence custom={dir} mode="wait">
         <motion.div
           key={scene}
@@ -64,7 +64,10 @@ export default function PitchDeck() {
           animate="center"
           exit="exit"
           transition={{ duration: 0.55, ease: [0.76, 0, 0.24, 1] }}
-          style={{ position: 'absolute', inset: 0 }}
+          style={{
+            position: 'absolute',
+            top: 60, left: 0, right: 0, bottom: 0,
+          }}
         >
           <SceneComponent
             onNext={() => navigate(scene + 1)}
@@ -73,11 +76,16 @@ export default function PitchDeck() {
         </motion.div>
       </AnimatePresence>
 
-      {/* Bottom nav dots */}
+      {/* Bottom nav dots — frosted pill so it's visible on any background */}
       <div style={{
-        position: 'fixed', bottom: 28,
+        position: 'fixed', bottom: 24,
         left: '50%', transform: 'translateX(-50%)',
         zIndex: 100, display: 'flex', alignItems: 'center', gap: 8,
+        background: 'rgba(0,0,0,0.28)',
+        backdropFilter: 'blur(12px)',
+        WebkitBackdropFilter: 'blur(12px)',
+        borderRadius: 20, padding: '8px 16px',
+        border: '1px solid rgba(255,255,255,0.12)',
       }}>
         {SCENES.map((s, i) => (
           <button key={s.id}
@@ -86,29 +94,35 @@ export default function PitchDeck() {
             style={{
               width: i === scene ? 32 : 8, height: 8,
               borderRadius: 4, border: 'none', cursor: 'pointer',
-              transition: 'all 0.3s ease',
-              background: i === scene ? C.tealVib : 'rgba(255,255,255,0.2)',
+              transition: 'all 0.3s ease', padding: 0,
+              background: i === scene ? C.tealVib : 'rgba(255,255,255,0.45)',
             }}
           />
         ))}
       </div>
 
-      {/* Arrow hints */}
+      {/* Arrow hints — frosted glass, visible on any background */}
       {scene > 0 && (
         <button onClick={() => navigate(scene - 1)} style={{
-          position: 'fixed', left: 16, top: '50%', transform: 'translateY(-50%)',
-          zIndex: 100, background: C.surface, border: `1px solid ${C.border}`,
-          borderRadius: 8, width: 36, height: 36, cursor: 'pointer',
-          color: 'white', fontSize: 18, display: 'flex',
+          position: 'fixed', left: 14, top: '50%', transform: 'translateY(-50%)',
+          zIndex: 100,
+          background: 'rgba(0,0,0,0.28)', backdropFilter: 'blur(12px)',
+          WebkitBackdropFilter: 'blur(12px)',
+          border: '1px solid rgba(255,255,255,0.18)',
+          borderRadius: 10, width: 36, height: 36, cursor: 'pointer',
+          color: 'white', fontSize: 20, display: 'flex',
           alignItems: 'center', justifyContent: 'center',
         }}>‹</button>
       )}
       {scene < total - 1 && (
         <button onClick={() => navigate(scene + 1)} style={{
-          position: 'fixed', right: 16, top: '50%', transform: 'translateY(-50%)',
-          zIndex: 100, background: C.surface, border: `1px solid ${C.border}`,
-          borderRadius: 8, width: 36, height: 36, cursor: 'pointer',
-          color: 'white', fontSize: 18, display: 'flex',
+          position: 'fixed', right: 14, top: '50%', transform: 'translateY(-50%)',
+          zIndex: 100,
+          background: 'rgba(0,0,0,0.28)', backdropFilter: 'blur(12px)',
+          WebkitBackdropFilter: 'blur(12px)',
+          border: '1px solid rgba(255,255,255,0.18)',
+          borderRadius: 10, width: 36, height: 36, cursor: 'pointer',
+          color: 'white', fontSize: 20, display: 'flex',
           alignItems: 'center', justifyContent: 'center',
         }}>›</button>
       )}
