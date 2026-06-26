@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { C } from '../tokens';
 
 interface SceneProps { onNext: () => void; onPrev: () => void; }
@@ -83,13 +84,17 @@ function Device2D({ face }: { face: 'front' | 'back' }) {
   );
 }
 
-// ---------- Three.js 3D viewer ----------
+// ---------- Three.js 3D viewer — loads GLB from public/models/ ----------
+
+const GLB_URL = import.meta.env.BASE_URL + 'models/neurapad.glb';
 
 function ThreeViewer() {
   const mountRef = useRef<HTMLDivElement>(null);
   const frameRef = useRef<number>(0);
   const resumeRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const cameraTargetRef = useRef({ x: 0, y: 0, z: 5 });
+  const modelGroupRef = useRef<THREE.Group | null>(null);
+  const [loadState, setLoadState] = useState<'loading' | 'ready' | 'error'>('loading');
+  const [progress, setProgress] = useState(0);
 
   useEffect(() => {
     const container = mountRef.current;
@@ -97,145 +102,111 @@ function ThreeViewer() {
     const w = container.clientWidth;
     const h = container.clientHeight;
 
-    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    // Renderer
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
     renderer.setSize(w, h);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.1;
     container.appendChild(renderer.domElement);
 
+    // Scene
     const scene = new THREE.Scene();
     scene.background = new THREE.Color('#060D1A');
-    scene.fog = new THREE.FogExp2('#060D1A', 0.06);
-
-    // Body
-    const bodyGeo = new THREE.BoxGeometry(2.8, 4.0, 0.10);
-    const bodyMat = new THREE.MeshStandardMaterial({ color: '#1C1C1E', roughness: 0.88, metalness: 0.45 });
-    const body = new THREE.Mesh(bodyGeo, bodyMat);
-    scene.add(body);
-
-    // Display
-    const displayGeo = new THREE.PlaneGeometry(2.5, 3.6);
-    const displayMat = new THREE.MeshStandardMaterial({ color: '#000000', roughness: 0.95, metalness: 0.0 });
-    const display = new THREE.Mesh(displayGeo, displayMat);
-    display.position.z = 0.051;
-    scene.add(display);
-
-    // Screen canvas texture
-    const screenCanvas = document.createElement('canvas');
-    screenCanvas.width = 512; screenCanvas.height = 700;
-    const ctx = screenCanvas.getContext('2d')!;
-    ctx.fillStyle = '#000000';
-    ctx.fillRect(0, 0, 512, 700);
-    ctx.strokeStyle = 'rgba(255,255,255,0.5)';
-    ctx.lineWidth = 1;
-    [60, 100, 140].forEach(r => {
-      ctx.beginPath(); ctx.arc(256, 280, r, 0, Math.PI * 2); ctx.stroke();
-    });
-    ctx.fillStyle = '#FFFFFF';
-    ctx.font = 'bold 40px sans-serif';
-    ctx.textAlign = 'center';
-    ctx.fillText('NeuraOS', 256, 440);
-    ctx.fillStyle = 'rgba(148,163,184,0.7)';
-    ctx.font = '24px sans-serif';
-    ctx.fillText('Initialising...', 256, 480);
-    ctx.fillStyle = '#0d9488';
-    ctx.fillRect(156, 600, 100, 4);
-    ctx.fillStyle = 'rgba(255,255,255,0.1)';
-    ctx.fillRect(256, 600, 200, 4);
-    const screenTex = new THREE.CanvasTexture(screenCanvas);
-    const screenMesh = new THREE.Mesh(
-      new THREE.PlaneGeometry(2.4, 3.45),
-      new THREE.MeshBasicMaterial({ map: screenTex })
-    );
-    screenMesh.position.z = 0.052;
-    scene.add(screenMesh);
-
-    // Corner bumpers
-    const bumperMat = new THREE.MeshStandardMaterial({ color: '#0D0D0D', roughness: 0.95, metalness: 0.0 });
-    [[-1.3, 1.9], [1.3, 1.9], [-1.3, -1.9], [1.3, -1.9]].forEach(([x, y]) => {
-      const bm = new THREE.Mesh(new THREE.BoxGeometry(0.28, 0.28, 0.15), bumperMat);
-      bm.position.set(x, y, 0);
-      scene.add(bm);
-    });
-
-    // Stylus
-    const stylusGeo = new THREE.CylinderGeometry(0.04, 0.035, 3.8, 16);
-    const stylusMat = new THREE.MeshStandardMaterial({ color: '#1A1A1A', roughness: 0.6, metalness: 0.6 });
-    const stylus = new THREE.Mesh(stylusGeo, stylusMat);
-    stylus.rotation.z = Math.PI / 2;
-    stylus.position.set(1.58, 0, 0);
-    scene.add(stylus);
-
-    // Back wordmark texture
-    const backCanvas = document.createElement('canvas');
-    backCanvas.width = 512; backCanvas.height = 700;
-    const bctx = backCanvas.getContext('2d')!;
-    bctx.fillStyle = '#1C1C1E';
-    bctx.fillRect(0, 0, 512, 700);
-    const grad = bctx.createLinearGradient(106, 0, 406, 0);
-    grad.addColorStop(0, '#8B6B1F');
-    grad.addColorStop(0.5, '#F5D67D');
-    grad.addColorStop(1, '#8B6B1F');
-    bctx.fillStyle = grad;
-    bctx.font = 'bold 60px sans-serif';
-    bctx.textAlign = 'center';
-    bctx.fillText('NeuraLife', 256, 345);
-    bctx.font = '22px sans-serif';
-    bctx.fillStyle = '#C9A84C';
-    bctx.fillText('S  m  a  r  t  P  a  d', 256, 385);
-    const backTex = new THREE.CanvasTexture(backCanvas);
-    const backMesh = new THREE.Mesh(
-      new THREE.PlaneGeometry(2.4, 3.45),
-      new THREE.MeshBasicMaterial({ map: backTex })
-    );
-    backMesh.rotation.y = Math.PI;
-    backMesh.position.z = -0.052;
-    scene.add(backMesh);
+    scene.fog = new THREE.FogExp2('#060D1A', 0.04);
 
     // Lighting
-    scene.add(new THREE.AmbientLight('#ffffff', 0.4));
-    const key = new THREE.DirectionalLight('#ffffff', 1.4);
-    key.position.set(3, 4, 3);
+    scene.add(new THREE.AmbientLight('#ffffff', 0.8));
+
+    const key = new THREE.DirectionalLight('#ffffff', 2.0);
+    key.position.set(4, 6, 5);
+    key.castShadow = true;
     scene.add(key);
-    const fill = new THREE.DirectionalLight('#ffffff', 0.5);
-    fill.position.set(-3, -2, 2);
+
+    const fill = new THREE.DirectionalLight('#cce8ff', 0.6);
+    fill.position.set(-4, -2, 3);
     scene.add(fill);
-    const tealLight = new THREE.PointLight('#0d9488', 1.2, 8);
-    tealLight.position.set(-2, 2, 2);
+
+    const tealLight = new THREE.PointLight('#0d9488', 1.5, 12);
+    tealLight.position.set(-3, 3, 3);
     scene.add(tealLight);
-    const goldLight = new THREE.PointLight('#F59E0B', 0.8, 8);
-    goldLight.position.set(1, -1, -2);
+
+    const goldLight = new THREE.PointLight('#F5D67D', 0.9, 10);
+    goldLight.position.set(2, -2, -3);
     scene.add(goldLight);
 
-    const camera = new THREE.PerspectiveCamera(35, w / h, 0.1, 100);
+    // Camera
+    const camera = new THREE.PerspectiveCamera(30, w / h, 0.01, 200);
     camera.position.set(0, 0, 8);
 
+    // Controls
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
-    controls.dampingFactor = 0.05;
+    controls.dampingFactor = 0.06;
     controls.enablePan = false;
-    controls.minDistance = 5;
-    controls.maxDistance = 12;
+    controls.minDistance = 3;
+    controls.maxDistance = 16;
     controls.autoRotate = true;
-    controls.autoRotateSpeed = 1.2;
+    controls.autoRotateSpeed = 0.9;
 
     controls.addEventListener('start', () => {
       controls.autoRotate = false;
       if (resumeRef.current) clearTimeout(resumeRef.current);
     });
     controls.addEventListener('end', () => {
-      resumeRef.current = setTimeout(() => { controls.autoRotate = true; }, 2000);
+      resumeRef.current = setTimeout(() => { controls.autoRotate = true; }, 2500);
     });
 
+    // Load GLB
+    const loader = new GLTFLoader();
+    loader.load(
+      GLB_URL,
+      (gltf) => {
+        const model = gltf.scene;
+
+        // Auto-center and scale to fit scene
+        const box = new THREE.Box3().setFromObject(model);
+        const center = box.getCenter(new THREE.Vector3());
+        const size = box.getSize(new THREE.Vector3());
+        const maxDim = Math.max(size.x, size.y, size.z);
+        const targetSize = 5.5;
+        const scale = targetSize / maxDim;
+        model.scale.setScalar(scale);
+        model.position.sub(center.multiplyScalar(scale));
+
+        // Enable shadows on all meshes
+        model.traverse((child) => {
+          if ((child as THREE.Mesh).isMesh) {
+            child.castShadow = true;
+            child.receiveShadow = true;
+          }
+        });
+
+        const group = new THREE.Group();
+        group.add(model);
+        scene.add(group);
+        modelGroupRef.current = group;
+        setLoadState('ready');
+      },
+      (xhr) => {
+        if (xhr.total) setProgress(Math.round(xhr.loaded / xhr.total * 100));
+      },
+      (_err) => {
+        setLoadState('error');
+      }
+    );
+
+    // Animate
     const animate = () => {
       frameRef.current = requestAnimationFrame(animate);
       controls.update();
-      // Lerp camera to target
-      camera.position.x += (cameraTargetRef.current.x - camera.position.x) * 0.05;
-      camera.position.z += (cameraTargetRef.current.z - camera.position.z) * 0.05;
-      // Float
-      const floatY = Math.sin(Date.now() * 0.001) * 0.05;
-      body.position.y = floatY;
-      stylus.position.y = floatY;
+      // Gentle float when model is loaded
+      if (modelGroupRef.current) {
+        modelGroupRef.current.position.y = Math.sin(Date.now() * 0.0008) * 0.06;
+      }
       renderer.render(scene, camera);
     };
     animate();
@@ -254,36 +225,52 @@ function ThreeViewer() {
   return (
     <div style={{ position: 'relative', width: '100%', height: '100%' }}>
       <div ref={mountRef} style={{ width: '100%', height: '100%' }} />
-      <div style={{
-        position: 'absolute', bottom: 48, left: 0, right: 0,
-        display: 'flex', justifyContent: 'center', gap: 12,
-      }}>
-        <button
-          onClick={() => { cameraTargetRef.current = { x: 0, y: 0, z: 8 }; }}
-          style={{
-            background: 'rgba(13,148,136,0.2)', border: '1px solid rgba(13,148,136,0.4)',
-            color: '#0d9488', fontFamily: "'Inter', sans-serif", fontSize: 12,
-            padding: '6px 14px', borderRadius: 20, cursor: 'pointer',
-          }}>
-          Front View
-        </button>
-        <button
-          onClick={() => { cameraTargetRef.current = { x: 0, y: 0, z: -8 }; }}
-          style={{
-            background: 'rgba(245,214,125,0.1)', border: '1px solid rgba(245,214,125,0.3)',
-            color: '#F5D67D', fontFamily: "'Inter', sans-serif", fontSize: 12,
-            padding: '6px 14px', borderRadius: 20, cursor: 'pointer',
-          }}>
-          Back View
-        </button>
-      </div>
-      <p style={{
-        position: 'absolute', bottom: 20, left: 0, right: 0,
-        textAlign: 'center', fontFamily: "'Inter', sans-serif",
-        fontSize: 11, color: 'rgba(255,255,255,0.3)', margin: 0,
-      }}>
-        Drag to rotate · Scroll to zoom
-      </p>
+
+      {/* Loading overlay */}
+      {loadState === 'loading' && (
+        <div style={{
+          position: 'absolute', inset: 0, display: 'flex',
+          flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+          gap: 16, background: 'rgba(6,13,26,0.85)', backdropFilter: 'blur(4px)',
+        }}>
+          <div style={{ fontSize: 32 }}>⚙️</div>
+          <div style={{ fontFamily: "'Poppins', sans-serif", fontSize: 14, color: 'rgba(255,255,255,0.8)' }}>
+            Loading 3D model…
+          </div>
+          {/* Progress bar */}
+          <div style={{ width: 180, height: 3, background: 'rgba(255,255,255,0.1)', borderRadius: 2 }}>
+            <div style={{ width: `${progress}%`, height: '100%', background: '#0d9488', borderRadius: 2, transition: 'width 0.3s' }} />
+          </div>
+          <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 12, color: 'rgba(255,255,255,0.35)' }}>
+            {progress}%
+          </div>
+        </div>
+      )}
+
+      {/* Error state */}
+      {loadState === 'error' && (
+        <div style={{
+          position: 'absolute', inset: 0, display: 'flex',
+          flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 8,
+        }}>
+          <div style={{ fontSize: 28 }}>⚠️</div>
+          <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 13, color: 'rgba(255,255,255,0.5)' }}>
+            Could not load 3D model
+          </div>
+        </div>
+      )}
+
+      {/* Controls hint — only when ready */}
+      {loadState === 'ready' && (
+        <p style={{
+          position: 'absolute', bottom: 14, left: 0, right: 0,
+          textAlign: 'center', fontFamily: "'Inter', sans-serif",
+          fontSize: 11, color: 'rgba(255,255,255,0.28)', margin: 0,
+          pointerEvents: 'none',
+        }}>
+          Drag to rotate · Scroll to zoom
+        </p>
+      )}
     </div>
   );
 }
