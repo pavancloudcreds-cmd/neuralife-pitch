@@ -84,7 +84,7 @@ We are not asking permission to enter the ecosystem. We are already inside it.`,
   },
 ];
 
-export default function Scene5Moats({ onNext: _onNext }: SceneProps) {
+export default function Scene6Moats({ onNext: _onNext }: SceneProps) {
   const [active, setActive] = useState<number | null>(null);
 
   return (

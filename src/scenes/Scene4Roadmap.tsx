@@ -183,7 +183,7 @@ function AllModelsView() {
 
 const TABS = ['6 Months', '12 Months', '18 Months', 'All Models'];
 
-export default function Scene3Roadmap({ onNext: _onNext }: SceneProps) {
+export default function Scene4Roadmap({ onNext: _onNext }: SceneProps) {
   const [tab, setTab] = useState(0);
 
   const milestones = [SIX, TWELVE, EIGHTEEN];

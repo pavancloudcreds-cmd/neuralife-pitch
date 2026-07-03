@@ -1,13 +1,15 @@
 import { useState, useEffect, useCallback } from 'react';
+import { drilldownState } from './scenes/neurapath/drilldownState';
 
 export const SCENES = [
   { id: 1, slug: 'device',      label: 'The Device'     },
-  { id: 2, slug: 'impact',      label: 'The Impact'     },
-  { id: 3, slug: 'roadmap',     label: 'Roadmap'        },
-  { id: 4, slug: 'competition', label: 'No Competition' },
-  { id: 5, slug: 'moats',       label: 'The Moats'      },
-  { id: 6, slug: 'ask',         label: 'The Ask'        },
-  { id: 7, slug: 'legal',       label: 'Legal Journey'  },
+  { id: 2, slug: 'neurapath',   label: 'NeuraPath'      },
+  { id: 3, slug: 'impact',      label: 'The Impact'     },
+  { id: 4, slug: 'roadmap',     label: 'Roadmap'        },
+  { id: 5, slug: 'competition', label: 'No Competition' },
+  { id: 6, slug: 'moats',       label: 'The Moats'      },
+  { id: 7, slug: 'ask',         label: 'The Ask'        },
+  { id: 8, slug: 'legal',       label: 'Legal Journey'  },
 ] as const;
 
 export function useDeck() {
@@ -21,6 +23,7 @@ export function useDeck() {
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
+      if (drilldownState.active) return;
       if (['ArrowRight', 'ArrowDown', 'Enter', ' '].includes(e.key)) {
         e.preventDefault(); next();
       }

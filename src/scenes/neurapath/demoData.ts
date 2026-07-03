@@ -1,0 +1,156 @@
+export const DEMO_STUDENT = {
+  fullName: 'Arjun Vasireddy',
+  firstName: 'Arjun',
+  neuraId: 'NID-2025-AP-084291',
+  school: 'Vikas High School, Rajahmundry',
+  board: 'SCERT AP',
+  classYear: 10,
+  academicYear: '2025-2026',
+  fatherName: 'Suresh Vasireddy',
+  motherName: 'Lakshmi Vasireddy',
+  dob: '12 March 2010',
+  medium: 'English',
+  neuraCoinsTotal: 2847,
+  attendanceRate: 91,
+
+  performance: {
+    mathematics:     { 7: 68, 8: 72, 9: 78, 10: 84, trend: 'IMPROVING' as const },
+    physicalScience:  { 7: 71, 8: 79, 9: 83, 10: 87, trend: 'IMPROVING' as const },
+    biology:          { 7: 65, 8: 68, 9: 71, 10: 74, trend: 'IMPROVING' as const },
+    socialStudies:    { 7: 79, 8: 81, 9: 80, 10: 83, trend: 'STABLE' as const },
+    english:          { 7: 74, 8: 76, 9: 79, 10: 82, trend: 'IMPROVING' as const },
+    telugu:           { 7: 81, 8: 83, 9: 85, 10: 86, trend: 'STABLE' as const },
+  },
+
+  topRecommendation: {
+    path: 'MPC — Mathematics, Physics, Chemistry',
+    fitScore: 87,
+    fitLabel: 'Excellent Match',
+    exam: 'AP EAMCET',
+    examReadiness: 82,
+    why: 'Your Mathematics climbed from 68% in Class 7 to 84% in Class 10 — a 16-point rise over four years. Physical Science is your strongest subject at 87%. The data points to one path clearly: MPC.',
+  },
+
+  otherPaths: [
+    { name: 'BiPC', score: 71, label: 'Strong Match' },
+    { name: 'Polytechnic CSE', score: 83, label: 'Excellent Match' },
+    { name: 'MEC', score: 58, label: 'Good Match' },
+  ],
+
+  bestChapter: 'Light — Reflection and Refraction',
+  bestSubject: 'Physical Science',
+  biggestImprovement: { subject: 'Mathematics', from: 68, to: 84 },
+  homeworkCompletion: 88,
+  homeworkByYear: { 7: 82, 8: 89, 9: 91, 10: 88 },
+  neuraCoinsPerYear: { 7: 412, 8: 689, 9: 821, 10: 925 },
+
+  examReadiness: [
+    { name: 'EAMCET Engg.', score: 82 },
+    { name: 'NEET', score: 61 },
+    { name: 'POLYCET', score: 88 },
+  ],
+
+  assessments: {
+    mathematics: {
+      cl7:  { fa1: 61, fa2: 67, sa1: 70, sa2: 74 },
+      cl8:  { fa1: 67, fa2: 70, sa1: 73, sa2: 76 },
+      cl9:  { fa1: 73, fa2: 76, sa1: 80, sa2: 82 },
+      cl10: { fa1: 80, fa2: 82, sa1: 83, sa2: 84 },
+    },
+    physicalScience: {
+      cl7:  { fa1: 65, fa2: 68, sa1: 72, sa2: 75 },
+      cl8:  { fa1: 72, fa2: 76, sa1: 80, sa2: 83 },
+      cl9:  { fa1: 79, fa2: 82, sa1: 84, sa2: 87 },
+      cl10: { fa1: 84, fa2: 85, sa1: 86, sa2: 87 },
+    },
+    biology: {
+      cl7:  { fa1: 60, fa2: 63, sa1: 66, sa2: 68 },
+      cl8:  { fa1: 63, fa2: 66, sa1: 68, sa2: 72 },
+      cl9:  { fa1: 67, fa2: 69, sa1: 72, sa2: 74 },
+      cl10: { fa1: 72, fa2: 74, sa1: 74, sa2: 76 },
+    },
+    socialStudies: {
+      cl7:  { fa1: 76, fa2: 78, sa1: 80, sa2: 81 },
+      cl8:  { fa1: 79, fa2: 80, sa1: 82, sa2: 83 },
+      cl9:  { fa1: 77, fa2: 79, sa1: 81, sa2: 83 },
+      cl10: { fa1: 81, fa2: 82, sa1: 83, sa2: 85 },
+    },
+    english: {
+      cl7:  { fa1: 70, fa2: 72, sa1: 74, sa2: 76 },
+      cl8:  { fa1: 73, fa2: 75, sa1: 76, sa2: 79 },
+      cl9:  { fa1: 76, fa2: 78, sa1: 80, sa2: 82 },
+      cl10: { fa1: 80, fa2: 81, sa1: 82, sa2: 84 },
+    },
+    telugu: {
+      cl7:  { fa1: 78, fa2: 80, sa1: 82, sa2: 84 },
+      cl8:  { fa1: 80, fa2: 82, sa1: 83, sa2: 85 },
+      cl9:  { fa1: 82, fa2: 84, sa1: 85, sa2: 87 },
+      cl10: { fa1: 84, fa2: 85, sa1: 86, sa2: 88 },
+    },
+  },
+
+  gradeInsights: {
+    cl7: {
+      topSubject: 'Telugu',
+      topSubjectScore: 84,
+      mostImproved: 'Mathematics',
+      mostImprovedGain: '+13 (FA1: 61% → SA2: 74%)',
+      needsAttention: 'Biology',
+      needsAttentionScore: 68,
+      attendance: 89,
+      homework: 82,
+      coins: 412,
+      counsellorNote: `Class 7 is the first year we have data on Arjun, and the pattern it reveals is encouraging. He entered with Mathematics at 61% in FA1 — below average for SCERT AP. By SA2, he had pushed it to 74%. That 13-point climb within a single year, at the age of 12, without coaching, is a signal of something important: this student responds to challenge. He does not collapse under pressure — he studies through it. Telugu and Social Studies came naturally. Physical Science showed curiosity from the start. The only subject requiring close attention is Biology — consistently his lowest across all assessments in Class 7. In Class 8, that either corrects or becomes a pattern worth addressing early.`,
+      watchIn8: 'Biology FA1 and Physical Science trajectory',
+    },
+    cl8: {
+      topSubject: 'Physical Science',
+      topSubjectScore: 83,
+      mostImproved: 'Physical Science',
+      mostImprovedGain: '+8 (75% → 83%)',
+      needsAttention: 'Biology',
+      needsAttentionScore: 72,
+      attendance: 91,
+      homework: 89,
+      coins: 689,
+      counsellorNote: `Class 8 confirms what Class 7 suggested: Arjun's strongest academic direction is Science. Physical Science made its biggest leap of any subject in any year — an 8-point annual gain. Mathematics continued its steady climb. The most important data point in Class 8 is not a subject score but a pattern: Arjun's FA1 scores are consistently lower than his SA2 scores in every subject. He starts each year building momentum and ends it stronger. This is not a student who peaks early — he accelerates. For parents watching a Class 8 student, this pattern is the most valuable thing to know. It means Class 10 SA2 — the exam that matters most — will represent his best performance, not an average of his year.`,
+      watchIn9: 'Chapter-level mastery in Mathematics and Physical Science',
+    },
+    cl9: {
+      topSubject: 'Physical Science',
+      topSubjectScore: 87,
+      mostImproved: 'Mathematics',
+      mostImprovedGain: '+6 (76% → 82%)',
+      needsAttention: 'Biology',
+      needsAttentionScore: 74,
+      bestChapter: 'Light — Reflection and Refraction (91% mastery)',
+      gapChapter: 'Chemical Bonding (58% mastery — appears in 7% of EAMCET Chemistry)',
+      attendance: 93,
+      homework: 91,
+      coins: 821,
+      projectionCl10Math: '82–86%',
+      projectionCl10PhySci: '85–89%',
+      projectionEAMCET: '78–84%',
+      counsellorNote: `Class 9 is the most analytically important year we track, and Arjun's Class 9 record is the clearest signal yet of where he is heading. Physical Science hit 87% — his highest score in any subject across three years. The chapter-level data reveals something specific: Light — Reflection and Refraction was mastered at 91%, already at EAMCET standard. This chapter alone carries 8% of EAMCET Physics questions. On the other side, Chemical Bonding sits at 58%. This chapter contributes 7% of EAMCET Chemistry questions and is also foundational for Class 10 Carbon compounds. This is not a subject weakness — it is a specific chapter gap that can be closed in Class 10 if targeted. The MPC pathway becomes clearer with every data point. EAMCET readiness currently sits at 71% without any coaching. If the Class 9 trajectory holds through Class 10, the projection is 78–84%.`,
+      watchIn10: 'Chemical Bonding + Algebra chapters for EAMCET alignment',
+    },
+  },
+
+  cl10Highlights: {
+    assessments: {
+      fa1: { maths: 80, phySci: 84, bio: 72, ss: 81, eng: 80, telugu: 84 },
+      sa2: { maths: 84, phySci: 87, bio: 76, ss: 85, eng: 84, telugu: 88 },
+    },
+    eamcetChapters: {
+      mathsCovered: 12, mathsTotal: 15,
+      physicsCovered: 9, physicsTotal: 12,
+      chemistryCovered: 8, chemistryTotal: 10,
+    },
+    bestChapter: 'Light — Reflection and Refraction',
+    gapChapter: 'Chemical Bonding',
+    attendanceDaysPresent: 330,
+    totalSchoolDays: 362,
+  },
+};
+
+export type DemoStudent = typeof DEMO_STUDENT;

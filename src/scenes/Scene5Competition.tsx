@@ -113,7 +113,7 @@ function MatrixTable({ visible }: { visible: boolean }) {
 
 const daysSinceStart = Math.floor((Date.now() - new Date('2025-04-01').getTime()) / 86400000);
 
-export default function Scene4Competition({ onNext }: SceneProps) {
+export default function Scene5Competition({ onNext }: SceneProps) {
   const [step, setStep] = useState(0);
 
   const advance = () => { if (step < 6) setStep(s => s + 1); else onNext(); };

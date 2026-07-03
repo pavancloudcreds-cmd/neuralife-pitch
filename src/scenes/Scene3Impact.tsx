@@ -206,7 +206,7 @@ function SystemsDiagram() {
 
 // ─── Main Scene ───────────────────────────────────────────────────────────────
 
-export default function Scene2Impact({ onNext }: SceneProps) {
+export default function Scene3Impact({ onNext }: SceneProps) {
   const [step, setStep] = useState(0);
 
   const advance = () => {

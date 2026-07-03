@@ -59,7 +59,7 @@ const TABS = ['School Introductions', 'RTIH Incubation', 'Grants & IP'];
 
 const priorityColor = (p: string) => p === 'High' ? C.tealVib : p === 'Medium' ? C.gold : C.faint;
 
-export default function Scene6Ask({ onNext: _onNext }: SceneProps) {
+export default function Scene7Ask({ onNext: _onNext }: SceneProps) {
   const [tab, setTab] = useState(0);
 
   return (

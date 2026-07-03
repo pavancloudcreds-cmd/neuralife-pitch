@@ -83,7 +83,7 @@ const LOCKED = [
   '🔒 Equity-free grant applications',
 ];
 
-export default function Scene7Legal({ onNext: _onNext }: SceneProps) {
+export default function Scene8Legal({ onNext: _onNext }: SceneProps) {
   return (
     <div style={{ width: '100%', height: '100%', background: C.dark, display: 'flex', overflow: 'hidden' }}>
       {/* LEFT — Timeline */}

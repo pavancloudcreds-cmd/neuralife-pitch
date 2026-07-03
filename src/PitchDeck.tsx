@@ -2,18 +2,19 @@ import { useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useDeck, SCENES } from './useDeck';
 import Scene1Device      from './scenes/Scene1Device';
-import Scene2Impact      from './scenes/Scene2Impact';
-import Scene3Roadmap     from './scenes/Scene3Roadmap';
-import Scene4Competition from './scenes/Scene4Competition';
-import Scene5Moats       from './scenes/Scene5Moats';
-import Scene6Ask         from './scenes/Scene6Ask';
-import Scene7Legal       from './scenes/Scene7Legal';
+import Scene2NeuraPath   from './scenes/Scene2NeuraPath';
+import Scene3Impact      from './scenes/Scene3Impact';
+import Scene4Roadmap     from './scenes/Scene4Roadmap';
+import Scene5Competition from './scenes/Scene5Competition';
+import Scene6Moats       from './scenes/Scene6Moats';
+import Scene7Ask         from './scenes/Scene7Ask';
+import Scene8Legal       from './scenes/Scene8Legal';
 import { GoldWordmark }  from './components/GoldWordmark';
 import { C } from './tokens';
 
 const COMPONENTS = [
-  Scene1Device, Scene2Impact, Scene3Roadmap,
-  Scene4Competition, Scene5Moats, Scene6Ask, Scene7Legal,
+  Scene1Device, Scene2NeuraPath, Scene3Impact, Scene4Roadmap,
+  Scene5Competition, Scene6Moats, Scene7Ask, Scene8Legal,
 ];
 
 const variants = {
