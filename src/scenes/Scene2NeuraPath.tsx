@@ -7,32 +7,38 @@ import { drilldownState } from './neurapath/drilldownState';
 import CoverPage from './neurapath/pages/CoverPage';
 import PromisePage from './neurapath/pages/PromisePage';
 import StudentProfilePage from './neurapath/pages/StudentProfilePage';
+import AboutThisReportPage from './neurapath/pages/AboutThisReportPage';
 import CareerPage from './neurapath/pages/CareerPage';
 import AnalysisPage from './neurapath/pages/AnalysisPage';
 import ClassPage from './neurapath/pages/ClassPage';
 import JourneyPage from './neurapath/pages/JourneyPage';
+import NoteForArjunPage from './neurapath/pages/NoteForArjunPage';
 import FeedbackEnglishPage from './neurapath/pages/FeedbackEnglishPage';
 import FeedbackTeluguPage from './neurapath/pages/FeedbackTeluguPage';
 import AllTheBestPage from './neurapath/pages/AllTheBestPage';
+import NeuraIDCertificatePage from './neurapath/pages/NeuraIDCertificatePage';
 import BackCoverPage from './neurapath/pages/BackCoverPage';
 
 interface SceneProps { onNext: () => void; onPrev: () => void; }
 
 const BOOK_PAGES = [
-  { id: 'cover',       label: 'Cover',                        icon: '📕', sub: 'Hard cover · Gold foil' },
-  { id: 'promise',     label: 'The Promise',                  icon: '✦',  sub: 'Mission statement' },
-  { id: 'profile',     label: 'Student Profile',              icon: '👤', sub: 'School · Identity · Pass photo' },
-  { id: 'career',      label: 'Career Recommendation',        icon: '🎯', sub: 'MPC · 87% fit · EAMCET' },
-  { id: 'analysis',    label: '4-Year Analysis',              icon: '📊', sub: 'All subjects · All years' },
-  { id: 'class7',      label: 'Class 7 — The Beginning',      icon: '🌅', sub: 'FA1/FA2/SA1/SA2 breakdown' },
-  { id: 'class8',      label: 'Class 8 — Finding Direction',  icon: '🔵', sub: 'Year-on-year growth' },
-  { id: 'class9',      label: 'Class 9 — The Build-Up',       icon: '🌿', sub: 'Chapter mastery · Projections' },
-  { id: 'class10',     label: 'Class 10 — The Culmination',   icon: '🏆', sub: 'Final results · EAMCET ready' },
-  { id: 'journey',     label: 'The Journey',                  icon: '⭐', sub: 'More than marks' },
-  { id: 'feedback-en', label: 'Letter — English',             icon: '✉️', sub: '"We saw your child."' },
-  { id: 'feedback-te', label: 'Letter — Telugu',              icon: '✉️', sub: '"మేము మీ పిల్లవాడిని చూశాం."' },
-  { id: 'allthebest',  label: 'All the Best',                 icon: '🌅', sub: 'Farewell · Horizon' },
-  { id: 'backcover',   label: 'Back Cover',                   icon: '📗', sub: 'QR · neuralife.in' },
+  { id: 'cover',           label: 'Cover',                        icon: '📕', sub: 'Hard cover · Gold foil' },
+  { id: 'promise',         label: 'The Promise',                  icon: '✦',  sub: 'Mission statement' },
+  { id: 'profile',         label: 'Student Profile',              icon: '👤', sub: 'School · Identity · Pass photo' },
+  { id: 'about-report',    label: 'About This Report',            icon: '🔍', sub: 'Methodology · Data sources' },
+  { id: 'career',          label: 'Career Recommendation',        icon: '🎯', sub: 'MPC · 87% fit · EAMCET' },
+  { id: 'analysis',        label: '4-Year Analysis',              icon: '📊', sub: 'All subjects · All years' },
+  { id: 'class7',          label: 'Class 7 — The Beginning',      icon: '🌅', sub: 'FA1/FA2/SA1/SA2 breakdown' },
+  { id: 'class8',          label: 'Class 8 — Finding Direction',  icon: '🔵', sub: 'Year-on-year growth' },
+  { id: 'class9',          label: 'Class 9 — The Build-Up',       icon: '🌿', sub: 'Chapter mastery · Projections' },
+  { id: 'class10',         label: 'Class 10 — The Culmination',   icon: '🏆', sub: 'Final results · EAMCET ready' },
+  { id: 'journey',         label: 'The Journey',                  icon: '⭐', sub: 'More than marks' },
+  { id: 'note-for-arjun',  label: 'A Note for Arjun',             icon: '✉',  sub: 'For the student · Write your future' },
+  { id: 'feedback-en',     label: 'Letter — English',             icon: '✉️', sub: '"We saw your child."' },
+  { id: 'feedback-te',     label: 'Letter — Telugu',              icon: '✉️', sub: '"మేము మీ పిల్లవాడిని చూశాం."' },
+  { id: 'allthebest',      label: 'All the Best',                 icon: '🌅', sub: 'Farewell · Horizon' },
+  { id: 'neura-cert',      label: 'NeuraID Certificate',          icon: '🎓', sub: 'Official certification' },
+  { id: 'backcover',       label: 'Back Cover',                   icon: '📗', sub: 'QR · neuralife.in' },
 ] as const;
 
 type PageId = typeof BOOK_PAGES[number]['id'];
@@ -55,6 +61,12 @@ const PAGE_INSIGHTS: Record<PageId, { reveals: string; keyPoints: string[]; why:
     keyPoints: ['School name + stamp area', 'NeuraID (the school-independent identity)', 'All 4 class year pills filled'],
     why: 'School hands this at the ceremony. The stamp makes it official. But the remaining 13 pages are all NeuraLife.',
     designNote: 'School branding appears ONCE. NeuraLife appears on every other page.',
+  },
+  'about-report': {
+    reveals: 'The trust foundation. Parents understand exactly what was tracked before reading a single number.',
+    keyPoints: ['12 examinations · 48 assessment scores', 'Teacher-verified data (nothing estimated)', 'AI gap analysis + NeuraCoins explained'],
+    why: 'A parent who reads this page never questions the numbers that follow. It turns scepticism into trust before the data even appears.',
+    designNote: "Deliberately plain — cream background, no illustrations. Data methodology doesn't need decoration.",
   },
   career: {
     reveals: 'The single most important page for most parents. Clear, specific, trusted.',
@@ -98,6 +110,12 @@ const PAGE_INSIGHTS: Record<PageId, { reveals: string; keyPoints: string[]; why:
     why: "Indian parents are assessed by their children's marks. This page shows what the marks were built on.",
     designNote: 'Warm amber — celebratory, human, the whole person.',
   },
+  'note-for-arjun': {
+    reveals: 'The only page addressed to Arjun, not the parents. The student reads this at the ceremony.',
+    keyPoints: ['Letter to the student (not parent)', 'References his FA1→SA2 acceleration pattern', '4 ruled blank lines to write his own future'],
+    why: 'The ruled lines are the most photographed element in the entire booklet. Parents share them to family groups. Every share is a NeuraLife referral.',
+    designNote: 'Amber background matches the Journey page on the reverse — same sheet, continuous warmth.',
+  },
   'feedback-en': {
     reveals: 'The letter that makes parents cry. Specific, personal, signed.',
     keyPoints: ['"We did not assess on marks alone"', 'Specific percentages referenced', 'Signed by The NeuraLife Team'],
@@ -115,6 +133,12 @@ const PAGE_INSIGHTS: Record<PageId, { reveals: string; keyPoints: string[]; why:
     keyPoints: ['Scholar Pose 3 — looking at the sunrise', 'NeuraID printed in gold', 'All 4 years summarized in 4 lines'],
     why: 'The last page a student reads. It should feel like being sent off by someone who cared.',
     designNote: 'Navy to gold gradient — from where they came, to where they are going.',
+  },
+  'neura-cert': {
+    reveals: 'The official certification. Principal stamps and signs this at the farewell ceremony.',
+    keyPoints: ['NeuraID certified in print', 'School stamp + principal signature area', 'Scholar illustration as the NeuraLife seal'],
+    why: 'Parents keep this with the Transfer Certificate. It is the most "official" element in the booklet and the one they file in their records.',
+    designNote: 'This is the page the school is most proud of — it is their official endorsement inside a NeuraLife product.',
   },
   backcover: {
     reveals: 'QR code to the full interactive digital NeuraPath experience.',
@@ -177,18 +201,21 @@ function renderBookPage(id: PageId): ReactNode {
   switch (id) {
     case 'cover':       return <CoverPage student={DEMO_STUDENT} />;
     case 'promise':     return <PromisePage student={DEMO_STUDENT} />;
-    case 'profile':     return <StudentProfilePage student={DEMO_STUDENT} />;
-    case 'career':      return <CareerPage student={DEMO_STUDENT} />;
-    case 'analysis':    return <AnalysisPage student={DEMO_STUDENT} />;
-    case 'class7':      return <ClassPage student={DEMO_STUDENT} classYear={7} />;
-    case 'class8':      return <ClassPage student={DEMO_STUDENT} classYear={8} />;
-    case 'class9':      return <ClassPage student={DEMO_STUDENT} classYear={9} />;
-    case 'class10':     return <ClassPage student={DEMO_STUDENT} classYear={10} />;
-    case 'journey':     return <JourneyPage student={DEMO_STUDENT} />;
-    case 'feedback-en': return <FeedbackEnglishPage student={DEMO_STUDENT} />;
-    case 'feedback-te': return <FeedbackTeluguPage student={DEMO_STUDENT} />;
-    case 'allthebest':  return <AllTheBestPage student={DEMO_STUDENT} />;
-    case 'backcover':   return <BackCoverPage />;
+    case 'profile':      return <StudentProfilePage student={DEMO_STUDENT} />;
+    case 'about-report': return <AboutThisReportPage />;
+    case 'career':       return <CareerPage student={DEMO_STUDENT} />;
+    case 'analysis':     return <AnalysisPage student={DEMO_STUDENT} />;
+    case 'class7':       return <ClassPage student={DEMO_STUDENT} classYear={7} />;
+    case 'class8':       return <ClassPage student={DEMO_STUDENT} classYear={8} />;
+    case 'class9':       return <ClassPage student={DEMO_STUDENT} classYear={9} />;
+    case 'class10':      return <ClassPage student={DEMO_STUDENT} classYear={10} />;
+    case 'journey':      return <JourneyPage student={DEMO_STUDENT} />;
+    case 'note-for-arjun': return <NoteForArjunPage />;
+    case 'feedback-en':  return <FeedbackEnglishPage student={DEMO_STUDENT} />;
+    case 'feedback-te':  return <FeedbackTeluguPage student={DEMO_STUDENT} />;
+    case 'allthebest':   return <AllTheBestPage student={DEMO_STUDENT} />;
+    case 'neura-cert':   return <NeuraIDCertificatePage student={DEMO_STUDENT} />;
+    case 'backcover':    return <BackCoverPage />;
   }
 }
 
@@ -568,7 +595,7 @@ export default function Scene2NeuraPath(_props: SceneProps) {
               ⬇ Download PDF
             </a>
             <div style={{ display: 'flex', justifyContent: 'center', gap: 6, paddingBottom: 12, flexWrap: 'wrap' }}>
-              {['Print for farewell ceremony', 'A5 · 14 pages'].map(t => (
+              {['Print for farewell ceremony', 'A5 · 17 pages'].map(t => (
                 <span key={t} style={{ fontFamily: "'Poppins', sans-serif", fontSize: 8, color: NP.faint }}>
                   {t}
                 </span>
@@ -582,7 +609,7 @@ export default function Scene2NeuraPath(_props: SceneProps) {
       <div style={{ flex: '0 0 5%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10 }}>
         {[
           '💎 Premium hardcover — A5, gold foil, linen texture',
-          '📚 14 pages — Given at farewell ceremony',
+          '📚 17 pages — Given at farewell ceremony',
         ].map(t => (
           <span key={t} style={{
             fontFamily: "'Inter', sans-serif", fontSize: 11, color: NP.faint,

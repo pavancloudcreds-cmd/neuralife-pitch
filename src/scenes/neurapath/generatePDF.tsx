@@ -2,7 +2,7 @@
 // Node.js — NOT part of the browser bundle). Puppeteer launches a real
 // headless Chrome, so it cannot run inside a visitor's browser or on
 // GitHub Pages (static hosting only). Instead this pre-renders the whole
-// 14-page book to a static PDF at build/deploy time; the in-browser
+// 17-page book to a static PDF at build/deploy time; the in-browser
 // "Download PDF" button just links to that pre-built file.
 import puppeteer from 'puppeteer';
 import path from 'path';
@@ -19,13 +19,16 @@ import { processSvgOutline } from './svgOutline';
 import CoverPage from './pages/CoverPage';
 import PromisePage from './pages/PromisePage';
 import StudentProfilePage from './pages/StudentProfilePage';
+import AboutThisReportPage from './pages/AboutThisReportPage';
 import CareerPage from './pages/CareerPage';
 import AnalysisPage from './pages/AnalysisPage';
 import ClassPage from './pages/ClassPage';
 import JourneyPage from './pages/JourneyPage';
+import NoteForArjunPage from './pages/NoteForArjunPage';
 import FeedbackEnglishPage from './pages/FeedbackEnglishPage';
 import FeedbackTeluguPage from './pages/FeedbackTeluguPage';
 import AllTheBestPage from './pages/AllTheBestPage';
+import NeuraIDCertificatePage from './pages/NeuraIDCertificatePage';
 import BackCoverPage from './pages/BackCoverPage';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -73,20 +76,23 @@ const GOOGLE_FONTS_LINK =
   '&family=Lora:ital,wght@0,400;0,600;1,400&family=Poppins:wght@400;600;700;800&display=swap';
 
 const PAGE_DEFINITIONS: { id: string; element: ReactElement }[] = [
-  { id: 'cover',       element: <CoverPage student={DEMO_STUDENT} forPrint scholarSvg={scholarGold} /> },
-  { id: 'promise',     element: <PromisePage student={DEMO_STUDENT} forPrint /> },
-  { id: 'profile',     element: <StudentProfilePage student={DEMO_STUDENT} forPrint scholarSvg={scholarNavy} /> },
-  { id: 'career',      element: <CareerPage student={DEMO_STUDENT} forPrint /> },
-  { id: 'analysis',    element: <AnalysisPage student={DEMO_STUDENT} forPrint /> },
-  { id: 'class7',      element: <ClassPage student={DEMO_STUDENT} classYear={7} forPrint /> },
-  { id: 'class8',      element: <ClassPage student={DEMO_STUDENT} classYear={8} forPrint /> },
-  { id: 'class9',      element: <ClassPage student={DEMO_STUDENT} classYear={9} forPrint /> },
-  { id: 'class10',     element: <ClassPage student={DEMO_STUDENT} classYear={10} forPrint /> },
-  { id: 'journey',     element: <JourneyPage student={DEMO_STUDENT} forPrint scholarSvg={scholarAmber} /> },
-  { id: 'feedback-en', element: <FeedbackEnglishPage student={DEMO_STUDENT} forPrint /> },
-  { id: 'feedback-te', element: <FeedbackTeluguPage student={DEMO_STUDENT} forPrint /> },
-  { id: 'allthebest',  element: <AllTheBestPage student={DEMO_STUDENT} forPrint scholarSvg={scholarWhite} /> },
-  { id: 'backcover',   element: <BackCoverPage forPrint qrSrc={QR_DATA_URI} /> },
+  { id: 'cover',           element: <CoverPage student={DEMO_STUDENT} forPrint scholarSvg={scholarGold} /> },
+  { id: 'promise',         element: <PromisePage student={DEMO_STUDENT} forPrint /> },
+  { id: 'profile',         element: <StudentProfilePage student={DEMO_STUDENT} forPrint scholarSvg={scholarNavy} /> },
+  { id: 'about-report',    element: <AboutThisReportPage forPrint /> },
+  { id: 'career',          element: <CareerPage student={DEMO_STUDENT} forPrint /> },
+  { id: 'analysis',        element: <AnalysisPage student={DEMO_STUDENT} forPrint /> },
+  { id: 'class7',          element: <ClassPage student={DEMO_STUDENT} classYear={7} forPrint /> },
+  { id: 'class8',          element: <ClassPage student={DEMO_STUDENT} classYear={8} forPrint /> },
+  { id: 'class9',          element: <ClassPage student={DEMO_STUDENT} classYear={9} forPrint /> },
+  { id: 'class10',         element: <ClassPage student={DEMO_STUDENT} classYear={10} forPrint /> },
+  { id: 'journey',         element: <JourneyPage student={DEMO_STUDENT} forPrint scholarSvg={scholarAmber} /> },
+  { id: 'note-for-arjun',  element: <NoteForArjunPage forPrint /> },
+  { id: 'feedback-en',     element: <FeedbackEnglishPage student={DEMO_STUDENT} forPrint /> },
+  { id: 'feedback-te',     element: <FeedbackTeluguPage student={DEMO_STUDENT} forPrint /> },
+  { id: 'allthebest',      element: <AllTheBestPage student={DEMO_STUDENT} forPrint scholarSvg={scholarWhite} /> },
+  { id: 'neura-cert',      element: <NeuraIDCertificatePage student={DEMO_STUDENT} forPrint scholarSvg={scholarNavy} /> },
+  { id: 'backcover',       element: <BackCoverPage forPrint qrSrc={QR_DATA_URI} /> },
 ];
 
 // Page components render at a fixed NP.PAGE_W x NP.PAGE_H (420x594 CSS px —

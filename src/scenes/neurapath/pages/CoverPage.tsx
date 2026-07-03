@@ -2,6 +2,7 @@ import type { DemoStudent } from '../demoData';
 import { NP, goldTextStyle, printAdjust, navyLinen } from '../tokens';
 import { bookAsset, goldRule } from './shared';
 import { useSVGInline } from '../useSVGInline';
+import NavyLinenTexture from './NavyLinenTexture';
 
 interface Props {
   student: DemoStudent;
@@ -19,52 +20,60 @@ export default function CoverPage({ student, forPrint, scholarSvg }: Props) {
       ...navyLinen(forPrint),
       boxSizing: 'border-box',
       position: 'relative',
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      padding: '36px 32px',
       ...printAdjust(forPrint),
     }}>
+      <NavyLinenTexture />
       <div style={{
         position: 'absolute', inset: 12,
         border: '1px solid rgba(212,168,67,0.35)',
         borderRadius: 2, pointerEvents: 'none',
       }} />
 
-      {/* Top: scholar illustration */}
-      <div style={{ flex: 1, display: 'flex', alignItems: 'flex-end', justifyContent: 'center', paddingBottom: 20 }}>
-        <div
-          style={{ width: 200, height: 220, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-          dangerouslySetInnerHTML={{ __html: svgContent }}
-        />
-      </div>
-
-      <div style={{ ...goldRule(200, forPrint), margin: '0 auto 20px' }} />
-
+      {/* Real content sits in its own positioned layer, above the texture
+          (which is position:absolute with zIndex:0 — without an explicit
+          higher zIndex here, static-flow content doesn't reliably paint
+          above a positioned sibling). */}
       <div style={{
-        fontFamily: "'Poppins', sans-serif", fontWeight: 800, fontSize: 28, letterSpacing: '-0.5px',
-        ...goldTextStyle(forPrint),
+        position: 'relative', zIndex: 1,
+        width: '100%', height: '100%', boxSizing: 'border-box',
+        display: 'flex', flexDirection: 'column', alignItems: 'center',
+        padding: '36px 32px',
       }}>
-        NeuraLife
-      </div>
+        {/* Top: scholar illustration */}
+        <div style={{ flex: 1, display: 'flex', alignItems: 'flex-end', justifyContent: 'center', paddingBottom: 20 }}>
+          <div
+            style={{ width: 200, height: 220, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+            dangerouslySetInnerHTML={{ __html: svgContent }}
+          />
+        </div>
 
-      <div style={{ ...goldRule(60, forPrint), margin: '12px auto' }} />
+        <div style={{ ...goldRule(200, forPrint), margin: '0 auto 20px' }} />
 
-      <div style={{
-        fontFamily: "'Playfair Display', serif", fontSize: 20, textAlign: 'center', ...goldTextStyle(forPrint),
-      }}>
-        {student.fullName}
-      </div>
+        <div style={{
+          fontFamily: "'Poppins', sans-serif", fontWeight: 800, fontSize: 28, letterSpacing: '-0.5px',
+          ...goldTextStyle(forPrint),
+        }}>
+          NeuraLife
+        </div>
 
-      <div style={{
-        fontFamily: "'Poppins', sans-serif", fontSize: 8, color: NP.gold, textAlign: 'center',
-        letterSpacing: '0.25em', marginTop: 10,
-      }}>
-        NEURAPATH — ACADEMIC INTELLIGENCE REPORT
-      </div>
+        <div style={{ ...goldRule(60, forPrint), margin: '12px auto' }} />
 
-      <div style={{ paddingBottom: 20, alignSelf: 'flex-end', width: '100%', textAlign: 'right' }}>
-        <span style={{ fontFamily: "'Poppins', sans-serif", fontSize: 10, color: NP.gold }}>2026</span>
+        <div style={{
+          fontFamily: "'Playfair Display', serif", fontSize: 20, textAlign: 'center', ...goldTextStyle(forPrint),
+        }}>
+          {student.fullName}
+        </div>
+
+        <div style={{
+          fontFamily: "'Poppins', sans-serif", fontSize: 8, color: NP.gold, textAlign: 'center',
+          letterSpacing: '0.25em', marginTop: 10,
+        }}>
+          NEURAPATH — ACADEMIC INTELLIGENCE REPORT
+        </div>
+
+        <div style={{ paddingBottom: 20, alignSelf: 'flex-end', width: '100%', textAlign: 'right' }}>
+          <span style={{ fontFamily: "'Poppins', sans-serif", fontSize: 10, color: NP.gold }}>2026</span>
+        </div>
       </div>
     </div>
   );

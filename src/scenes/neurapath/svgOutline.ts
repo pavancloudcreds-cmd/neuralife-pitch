@@ -2,17 +2,23 @@
 // fetch) and the Node-side PDF generator (via fs.readFileSync). Keeping the
 // transform in one place guarantees the web view and the printed PDF render
 // the exact same outline.
+//
 // Every drawable element in these source files carries its paint as a CSS
 // style attribute — style="fill:#141c34; stroke:none;" — not as separate
-// fill="..."/stroke="..." XML attributes. A color is "near-white" if it's
-// one of the two highlight-shading hex values the art actually uses
-// (#fdfdfe / #fdfefe) or literal white — everything else is the navy "ink".
-const NEAR_WHITE_FILL = /^(#ffffff|#fff|white|#fdfdfe|#fdfefe)$/i;
+// fill="..."/stroke="..." XML attributes. The art is built from many
+// adjacent flat-filled shapes rather than drawn strokes, but a true
+// "outline" look (not a filled silhouette) means every one of those shape
+// boundaries needs to become a visible stroke with no fill: fill:none,
+// stroke:targetStrokeColor. STROKE_WIDTH is in viewBox units (the source is
+// a 1254x1254 viewBox) — 6 units reads as a crisp, consistent-weight line
+// across the different display sizes these get scaled to (70px watermark
+// up to 220px cover).
+const STROKE_WIDTH = 6;
 
 export function processSvgOutline(
   rawSvg: string,
   targetStrokeColor: string,
-  targetFillColor: string = 'none'
+  _targetFillColor: string = 'none'
 ): string {
   let svg = rawSvg;
 
@@ -25,29 +31,12 @@ export function processSvgOutline(
     return `<svg${cleaned} style="width:100%;height:100%">`;
   });
 
-  // Step 2: Recolor each element's fill.
-  //
-  // This artwork is built entirely from adjacent flat-filled shapes (no
-  // actual <path> strokes) — the "line art" look comes from the contrast
-  // between the navy "ink" regions and the near-white "highlight" regions,
-  // not from a stroke outline. So recoloring works on the two fill tones
-  // directly:
-  //   - "ink" (anything not near-white) becomes targetStrokeColor — this is
-  //     the visible line-art color (gold on the cover, amber on Journey,
-  //     navy for the profile watermark, white on the farewell page).
-  //   - "highlight" (near-white) becomes targetFillColor — 'none' (the
-  //     default) punches it transparent so it disappears into the page
-  //     background, giving a sparse gold/amber/navy silhouette with
-  //     cut-out shading. Passing an explicit color instead (AllTheBest's
-  //     all-white silhouette) makes highlight regions match the ink color
-  //     too, so the whole illustration reads as one solid-color shape
-  //     regardless of what's behind it (needed since that page's gradient
-  //     background isn't uniformly dark).
-  svg = svg.replace(/style="fill:\s*([^;]+);\s*stroke:[^;"]*;?"/g, (_match, fillValue) => {
-    const fill = fillValue.trim();
-    const newFill = NEAR_WHITE_FILL.test(fill) ? targetFillColor : targetStrokeColor;
-    return `style="fill:${newFill}; stroke:none;"`;
-  });
+  // Step 2: Replace every shape's fill+stroke style with an outline-only
+  // style: no fill, a visible stroke in the target color.
+  svg = svg.replace(
+    /style="fill:\s*[^;]+;\s*stroke:[^;"]*;?"/g,
+    `style="fill:none; stroke:${targetStrokeColor}; stroke-width:${STROKE_WIDTH}; stroke-linejoin:round;"`
+  );
 
   return svg;
 }

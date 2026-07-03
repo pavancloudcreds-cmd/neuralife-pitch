@@ -78,35 +78,10 @@ export const printAdjust = (forPrint?: boolean): CSSProperties =>
     ? ({ WebkitPrintColorAdjust: 'exact', printColorAdjust: 'exact' } as CSSProperties)
     : {};
 
-// Woven linen texture for the front/back covers: major grid every 24px,
-// fine grid every 6px. Uses opaque color stops (the highlight color fading
-// to the base navy itself, not the `transparent` keyword) — Chrome's
-// print-to-PDF pipeline has been observed to rasterize a `transparent`
-// gradient stop as a solid wrong-color block instead of fading out, so
-// this avoids transparency entirely and renders identically on screen and
-// in the printed PDF.
+// Base color for the front/back covers. The woven grid texture itself is
+// rendered separately via <NavyLinenTexture /> (pages/NavyLinenTexture.tsx)
+// as two overlay layers, not baked into this style object — see that
+// file's comment for why (a Chrome print-to-PDF gradient-stacking bug).
 export const navyLinen = (_forPrint?: boolean): CSSProperties => ({
   backgroundColor: '#0C1428',
-  backgroundImage: `
-    linear-gradient(
-      rgba(255,255,255,0.07) 1px,
-      #0C1428 1px
-    ),
-    linear-gradient(
-      90deg,
-      rgba(255,255,255,0.07) 1px,
-      #0C1428 1px
-    ),
-    linear-gradient(
-      rgba(255,255,255,0.035) 1px,
-      #0C1428 1px
-    ),
-    linear-gradient(
-      90deg,
-      rgba(255,255,255,0.035) 1px,
-      #0C1428 1px
-    )
-  `,
-  backgroundSize: '24px 24px, 24px 24px, 6px 6px, 6px 6px',
-  backgroundPosition: '-1px -1px, -1px -1px, -1px -1px, -1px -1px',
 });
