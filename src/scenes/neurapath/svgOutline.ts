@@ -2,6 +2,13 @@
 // fetch) and the Node-side PDF generator (via fs.readFileSync). Keeping the
 // transform in one place guarantees the web view and the printed PDF render
 // the exact same outline.
+// Every drawable element in these source files carries its paint as a CSS
+// style attribute — style="fill:#141c34; stroke:none;" — not as separate
+// fill="..."/stroke="..." XML attributes. A color is "near-white" if it's
+// one of the two highlight-shading hex values the art actually uses
+// (#fdfdfe / #fdfefe) or literal white — everything else is the navy "ink".
+const NEAR_WHITE_FILL = /^(#ffffff|#fff|white|#fdfdfe|#fdfefe)$/i;
+
 export function processSvgOutline(
   rawSvg: string,
   targetStrokeColor: string,
@@ -18,37 +25,29 @@ export function processSvgOutline(
     return `<svg${cleaned} style="width:100%;height:100%">`;
   });
 
-  // Step 2: Convert EXPLICIT white fills to targetFillColor (default
-  // 'none'). These are the highlight-shading regions of the source art.
-  // Left as 'none' they punch transparent gaps that let the page background
-  // show through (fine for a sparse gold/amber line-art look); passing the
-  // stroke color instead makes those regions solid, so the illustration
-  // reads as a filled silhouette rather than a gappy outline. Note: the
-  // source art's "white" is authored as near-white (#fdfdfe / #fdfefe), not
-  // literal #ffffff.
-  svg = svg.replace(/fill="#ffffff"/gi, `fill="${targetFillColor}"`);
-  svg = svg.replace(/fill="#fff"/gi, `fill="${targetFillColor}"`);
-  svg = svg.replace(/fill="white"/gi, `fill="${targetFillColor}"`);
-  svg = svg.replace(/fill="#fdfdfe"/gi, `fill="${targetFillColor}"`);
-  svg = svg.replace(/fill="#fdfefe"/gi, `fill="${targetFillColor}"`);
-
-  // Step 3: Convert ALL stroke colors to target color (whether explicit or added).
-  svg = svg.replace(/stroke="[^"]*"/g, `stroke="${targetStrokeColor}"`);
-
-  // Step 4: For elements with NO explicit stroke, add the target stroke color.
-  svg = svg.replace(
-    /<(path|circle|line|polyline|polygon|ellipse|rect)(\s)/g,
-    (match, tag, space) => {
-      if (!match.includes('stroke=')) {
-        return `<${tag} stroke="${targetStrokeColor}"${space}`;
-      }
-      return match;
-    }
-  );
-
-  // Step 5: Remove fill="none" only from container groups (g tags) — they
-  // should not have fills. Keep fill="none" on actual drawing elements.
-  svg = svg.replace(/<g\s([^>]*)fill="none"([^>]*)>/g, '<g $1$2>');
+  // Step 2: Recolor each element's fill.
+  //
+  // This artwork is built entirely from adjacent flat-filled shapes (no
+  // actual <path> strokes) — the "line art" look comes from the contrast
+  // between the navy "ink" regions and the near-white "highlight" regions,
+  // not from a stroke outline. So recoloring works on the two fill tones
+  // directly:
+  //   - "ink" (anything not near-white) becomes targetStrokeColor — this is
+  //     the visible line-art color (gold on the cover, amber on Journey,
+  //     navy for the profile watermark, white on the farewell page).
+  //   - "highlight" (near-white) becomes targetFillColor — 'none' (the
+  //     default) punches it transparent so it disappears into the page
+  //     background, giving a sparse gold/amber/navy silhouette with
+  //     cut-out shading. Passing an explicit color instead (AllTheBest's
+  //     all-white silhouette) makes highlight regions match the ink color
+  //     too, so the whole illustration reads as one solid-color shape
+  //     regardless of what's behind it (needed since that page's gradient
+  //     background isn't uniformly dark).
+  svg = svg.replace(/style="fill:\s*([^;]+);\s*stroke:[^;"]*;?"/g, (_match, fillValue) => {
+    const fill = fillValue.trim();
+    const newFill = NEAR_WHITE_FILL.test(fill) ? targetFillColor : targetStrokeColor;
+    return `style="fill:${newFill}; stroke:none;"`;
+  });
 
   return svg;
 }

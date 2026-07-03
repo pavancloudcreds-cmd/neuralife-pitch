@@ -79,34 +79,34 @@ export const printAdjust = (forPrint?: boolean): CSSProperties =>
     : {};
 
 // Woven linen texture for the front/back covers: major grid every 24px,
-// fine grid every 6px. Web-view only — each layer fades via a transparent
-// gradient stop, which Chrome's print-to-PDF pipeline rasterizes as a solid
-// wrong-color block instead of fading out (confirmed via the generated PDF).
-// The solid backgroundColor alone is print-safe and used as the fallback.
-export const navyLinen = (forPrint?: boolean): CSSProperties => ({
+// fine grid every 6px. Uses opaque color stops (the highlight color fading
+// to the base navy itself, not the `transparent` keyword) — Chrome's
+// print-to-PDF pipeline has been observed to rasterize a `transparent`
+// gradient stop as a solid wrong-color block instead of fading out, so
+// this avoids transparency entirely and renders identically on screen and
+// in the printed PDF.
+export const navyLinen = (_forPrint?: boolean): CSSProperties => ({
   backgroundColor: '#0C1428',
-  ...(forPrint ? {} : {
-    backgroundImage: `
-      linear-gradient(
-        rgba(255,255,255,0.07) 1px,
-        transparent 1px
-      ),
-      linear-gradient(
-        90deg,
-        rgba(255,255,255,0.07) 1px,
-        transparent 1px
-      ),
-      linear-gradient(
-        rgba(255,255,255,0.035) 1px,
-        transparent 1px
-      ),
-      linear-gradient(
-        90deg,
-        rgba(255,255,255,0.035) 1px,
-        transparent 1px
-      )
-    `,
-    backgroundSize: '24px 24px, 24px 24px, 6px 6px, 6px 6px',
-    backgroundPosition: '-1px -1px, -1px -1px, -1px -1px, -1px -1px',
-  }),
+  backgroundImage: `
+    linear-gradient(
+      rgba(255,255,255,0.07) 1px,
+      #0C1428 1px
+    ),
+    linear-gradient(
+      90deg,
+      rgba(255,255,255,0.07) 1px,
+      #0C1428 1px
+    ),
+    linear-gradient(
+      rgba(255,255,255,0.035) 1px,
+      #0C1428 1px
+    ),
+    linear-gradient(
+      90deg,
+      rgba(255,255,255,0.035) 1px,
+      #0C1428 1px
+    )
+  `,
+  backgroundSize: '24px 24px, 24px 24px, 6px 6px, 6px 6px',
+  backgroundPosition: '-1px -1px, -1px -1px, -1px -1px, -1px -1px',
 });
