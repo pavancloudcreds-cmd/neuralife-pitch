@@ -36,32 +36,32 @@ export default function FeedbackTeluguPage({ student: _student, forPrint }: Prop
         "మేము మీ పిల్లవాడిని చూశాం."
       </div>
 
-      <div style={{ flex: 1, overflow: 'hidden', marginTop: 20 }}>
-        <p style={{ fontFamily: TELUGU_FONT, fontWeight: 700, fontSize: 12, color: 'white', margin: '0 0 14px' }}>
+      <div style={{ flex: 1, overflow: 'hidden', marginTop: 14 }}>
+        <p style={{ fontFamily: TELUGU_FONT, fontWeight: 700, fontSize: 11, color: 'white', margin: '0 0 9px' }}>
           ప్రియమైన సురేష్ & లక్ష్మి గారూ,
         </p>
-        <p style={{ fontFamily: TELUGU_FONT, fontSize: 11, color: 'white', lineHeight: 2.1, margin: '0 0 14px' }}>
+        <p style={{ fontFamily: TELUGU_FONT, fontSize: 10, color: 'white', lineHeight: 1.7, margin: '0 0 9px' }}>
           మేము అర్జున్‌ని నేరుగా కలవలేదు. మేము వారిని
           డేటాలో కలిశాం. మరియు డేటా — మీరు దానిని
           సరిగ్గా, శ్రద్ధగా చూస్తే — అన్నీ చెప్తుంది.
         </p>
-        <p style={{ fontFamily: TELUGU_FONT, fontSize: 11, color: 'white', lineHeight: 2.1, margin: '0 0 14px' }}>
+        <p style={{ fontFamily: TELUGU_FONT, fontSize: 10, color: 'white', lineHeight: 1.7, margin: '0 0 9px' }}>
           మేము అర్జున్‌ని మార్కుల ఆధారంగా మాత్రమే
           అంచనా వేయలేదు. వారు కష్టపడిన ప్రతి అంశాన్ని
           అర్థం చేసుకున్న తర్వాత అంచనా వేశాం. అలసిపోయినా
           హోం వర్క్ పంపించిన వారాలను చూశాం.
         </p>
-        <p style={{ fontFamily: TELUGU_FONT, fontSize: 11, color: 'white', lineHeight: 2.1, margin: '0 0 14px' }}>
+        <p style={{ fontFamily: TELUGU_FONT, fontSize: 10, color: 'white', lineHeight: 1.7, margin: '0 0 9px' }}>
           నాలుగు సంవత్సరాలలో అర్జున్ 330 రోజులు బడికి
           వచ్చారు — ఆ consistency మార్కుషీట్‌లో కనపడదు.
           కానీ మేము చూశాం.
         </p>
-        <p style={{ fontFamily: TELUGU_FONT, fontSize: 11, color: 'white', lineHeight: 2.1, margin: '0 0 14px' }}>
+        <p style={{ fontFamily: TELUGU_FONT, fontSize: 10, color: 'white', lineHeight: 1.7, margin: '0 0 9px' }}>
           గణితం 68% నుండి 84%కి పెరిగింది. ఆ పెరుగుదల
           పరీక్షా హాలులో జరగదు. అది ముందు రాత్రి
           జరుగుతుంది — మీ పిల్లవాడు ఆ క్షణాలు జీవించారు.
         </p>
-        <p style={{ fontFamily: TELUGU_FONT, fontSize: 11, color: 'white', lineHeight: 2.1, margin: 0 }}>
+        <p style={{ fontFamily: TELUGU_FONT, fontSize: 10, color: 'white', lineHeight: 1.7, margin: 0 }}>
           మీ పిల్లవాడిని నమ్మండి. వారు ఇప్పటికే తమ
           సామర్థ్యాన్ని మీకు చూపించారు.
         </p>

@@ -37,36 +37,36 @@ export default function FeedbackEnglishPage({ student, forPrint }: Props) {
         "We saw your child."
       </div>
 
-      <div style={{ flex: 1, overflow: 'hidden', marginTop: 20 }}>
+      <div style={{ flex: 1, overflow: 'hidden', marginTop: 14 }}>
         <p style={{
-          fontFamily: "'Poppins', sans-serif", fontWeight: 600, fontSize: 11, color: 'white', margin: '0 0 14px',
+          fontFamily: "'Poppins', sans-serif", fontWeight: 600, fontSize: 11, color: 'white', margin: '0 0 9px',
         }}>
           Dear {father} & {mother} Garu,
         </p>
-        <p style={{ fontFamily: "'Lora', serif", fontSize: 10.5, color: 'white', lineHeight: 2.0, margin: '0 0 14px' }}>
+        <p style={{ fontFamily: "'Lora', serif", fontSize: 10, color: 'white', lineHeight: 1.6, margin: '0 0 9px' }}>
           We did not meet {student.firstName} in person. We met him in data.
           And data — when you look at it long enough and with
           enough care — tells you everything.
         </p>
-        <p style={{ fontFamily: "'Lora', serif", fontSize: 10.5, color: 'white', lineHeight: 2.0, margin: '0 0 14px' }}>
+        <p style={{ fontFamily: "'Lora', serif", fontSize: 10, color: 'white', lineHeight: 1.6, margin: '0 0 9px' }}>
           We did not assess {student.firstName} on marks alone. We assessed him
           on every concept he struggled with and eventually
           understood. On the weeks he came in tired but still
           submitted homework. On the subjects that felt unfair
           but improved anyway.
         </p>
-        <p style={{ fontFamily: "'Lora', serif", fontSize: 10.5, color: 'white', lineHeight: 2.0, margin: '0 0 14px' }}>
+        <p style={{ fontFamily: "'Lora', serif", fontSize: 10, color: 'white', lineHeight: 1.6, margin: '0 0 9px' }}>
           {student.firstName}'s attendance was {student.attendanceRate}% over four years — he was
           present for {student.cl10Highlights.attendanceDaysPresent} of {student.cl10Highlights.totalSchoolDays} school days. That consistency
           is not in any marksheet. It is in us. We saw it.
         </p>
-        <p style={{ fontFamily: "'Lora', serif", fontSize: 10.5, color: 'white', lineHeight: 2.0, margin: '0 0 14px' }}>
+        <p style={{ fontFamily: "'Lora', serif", fontSize: 10, color: 'white', lineHeight: 1.6, margin: '0 0 9px' }}>
           Mathematics went from 68% to 84%. That kind of growth
           does not happen in an exam hall. It happens in the
           quiet moments before one — and your son lived those
           moments.
         </p>
-        <p style={{ fontFamily: "'Lora', serif", fontSize: 10.5, color: 'white', lineHeight: 2.0, margin: 0 }}>
+        <p style={{ fontFamily: "'Lora', serif", fontSize: 10, color: 'white', lineHeight: 1.6, margin: 0 }}>
           Trust your son. He has already shown you what he is
           capable of.
         </p>

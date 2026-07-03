@@ -149,7 +149,32 @@ const PAGE_INSIGHTS: Record<PageId, { reveals: string; keyPoints: string[]; why:
 };
 
 const SPINE_W = 16;
-const isEdgePage = (i: number) => i === 0 || i === BOOK_PAGES.length - 1;
+// Cover is the only truly standalone single page (nothing precedes it to
+// pair with as a verso). Back Cover used to be treated the same way, but
+// it's now the recto partner of the NeuraID Certificate (see SPREAD_PAIRS)
+// and always renders as part of that spread instead.
+const isEdgePage = (i: number) => i === 0;
+
+// Some new pages are physically printed on the back of the *previous*
+// page's sheet, not as their own standalone recto. When turning the page,
+// they must appear on the LEFT (verso) of the spread, paired with the
+// page that follows them on the RIGHT (recto) — not alone on the right
+// like a normal page. Maps verso index -> recto index.
+const SPREAD_PAIRS: Record<number, number> = { 3: 4, 11: 12, 15: 16 };
+const RECTO_TO_VERSO: Record<number, number> = Object.fromEntries(
+  Object.entries(SPREAD_PAIRS).map(([verso, recto]) => [recto, Number(verso)])
+);
+
+// For any given index, resolves what should render on the left and right
+// of its spread: either [verso, recto] for a paired sheet, or [null, the
+// page itself] for a normal page with a blank facing page.
+function spreadContentFor(index: number): { leftId: PageId | null; rightId: PageId } {
+  const verso = index in SPREAD_PAIRS ? index : (index in RECTO_TO_VERSO ? RECTO_TO_VERSO[index] : null);
+  if (verso !== null) {
+    return { leftId: BOOK_PAGES[verso].id, rightId: BOOK_PAGES[SPREAD_PAIRS[verso]].id };
+  }
+  return { leftId: null, rightId: BOOK_PAGES[index].id };
+}
 
 const FLIP_KEYFRAMES = `
 @keyframes flipNext { 0% { transform: rotateY(0deg); } 100% { transform: rotateY(-90deg); } }
@@ -282,8 +307,29 @@ export default function Scene2NeuraPath(_props: SceneProps) {
     </ScaledPage>
   );
 
+  // The blank-vs-real left page: null renders as the plain cream verso;
+  // a PageId renders that page's real content (a "back of previous sheet"
+  // page from SPREAD_PAIRS) instead.
+  const leftPage = (leftId: PageId | null) => (
+    <div style={{
+      width: NP.PAGE_W, height: NP.PAGE_H, background: '#FFFEF7', overflow: 'hidden',
+      boxShadow: 'inset -4px 0 12px rgba(0,0,0,0.08)',
+    }}>
+      {leftId ? renderBookPage(leftId) : null}
+    </div>
+  );
+
+  const spine = (
+    <div style={{
+      width: SPINE_W, height: NP.PAGE_H,
+      background: 'linear-gradient(90deg, #0A0D14, #1C2333, #2A3448, #1C2333, #0A0D14)',
+      boxShadow: '-3px 0 8px rgba(0,0,0,0.4), 3px 0 8px rgba(0,0,0,0.4)',
+    }} />
+  );
+
   let stage: ReactNode;
   if (edgeTransition) {
+    const { leftId, rightId } = spreadContentFor(activeIndex);
     stage = (
       <AnimatePresence mode="wait">
         <motion.div
@@ -296,17 +342,13 @@ export default function Scene2NeuraPath(_props: SceneProps) {
           {isEdgePage(activeIndex) ? singlePage(active.id) : (
             <ScaledPage width={NP.PAGE_W * 2 + SPINE_W} height={NP.PAGE_H}>
               <div style={{ display: 'flex', width: NP.PAGE_W * 2 + SPINE_W, height: NP.PAGE_H }}>
-                <div style={{ width: NP.PAGE_W, height: NP.PAGE_H, background: '#FFFEF7', boxShadow: 'inset -4px 0 12px rgba(0,0,0,0.08)' }} />
-                <div style={{
-                  width: SPINE_W, height: NP.PAGE_H,
-                  background: 'linear-gradient(90deg, #0A0D14, #1C2333, #2A3448, #1C2333, #0A0D14)',
-                  boxShadow: '-3px 0 8px rgba(0,0,0,0.4), 3px 0 8px rgba(0,0,0,0.4)',
-                }} />
+                {leftPage(leftId)}
+                {spine}
                 <div style={{
                   width: NP.PAGE_W, height: NP.PAGE_H, background: 'white', overflow: 'hidden',
                   boxShadow: '0 4px 24px rgba(0,0,0,0.12), inset 4px 0 12px rgba(0,0,0,0.08)',
                 }}>
-                  {renderBookPage(active.id)}
+                  {renderBookPage(rightId)}
                 </div>
               </div>
             </ScaledPage>
@@ -317,10 +359,11 @@ export default function Scene2NeuraPath(_props: SceneProps) {
   } else if (isEdgePage(activeIndex)) {
     stage = singlePage(active.id);
   } else {
-    // Open-book spread: static blank left page + spine + the flipping
-    // content page on the right.
+    // Open-book spread: the left page is either blank (a normal page's
+    // never-modeled verso) or a real "back of the previous sheet" page
+    // from SPREAD_PAIRS; the right page is the one that flips.
     const isOutPhase = isTransitioning && activeIndex === outgoingIndex;
-    const contentPageId = isOutPhase ? BOOK_PAGES[outgoingIndex].id : active.id;
+    const { leftId, rightId } = spreadContentFor(isOutPhase ? outgoingIndex : activeIndex);
     const animName = isTransitioning
       ? (isOutPhase
         ? (flipDirection === 'next' ? 'flipNext' : 'flipPrev')
@@ -330,18 +373,8 @@ export default function Scene2NeuraPath(_props: SceneProps) {
     stage = (
       <ScaledPage width={NP.PAGE_W * 2 + SPINE_W} height={NP.PAGE_H}>
         <div style={{ display: 'flex', width: NP.PAGE_W * 2 + SPINE_W, height: NP.PAGE_H, perspective: 1800 }}>
-          {/* Blank left page — never flips, just sits still */}
-          <div style={{
-            width: NP.PAGE_W, height: NP.PAGE_H, background: '#FFFEF7',
-            boxShadow: 'inset -4px 0 12px rgba(0,0,0,0.08)', transition: 'opacity 0.15s ease',
-          }} />
-
-          {/* Spine */}
-          <div style={{
-            width: SPINE_W, height: NP.PAGE_H,
-            background: 'linear-gradient(90deg, #0A0D14, #1C2333, #2A3448, #1C2333, #0A0D14)',
-            boxShadow: '-3px 0 8px rgba(0,0,0,0.4), 3px 0 8px rgba(0,0,0,0.4)',
-          }} />
+          {leftPage(leftId)}
+          {spine}
 
           {/* Right page — the one that flips */}
           <div style={{
@@ -354,7 +387,7 @@ export default function Scene2NeuraPath(_props: SceneProps) {
               position: 'absolute', inset: 0, backfaceVisibility: 'hidden', overflow: 'hidden',
               background: 'white', boxShadow: '0 4px 24px rgba(0,0,0,0.12), inset 4px 0 12px rgba(0,0,0,0.08)',
             }}>
-              {renderBookPage(contentPageId)}
+              {renderBookPage(rightId)}
             </div>
             <div style={{
               position: 'absolute', inset: 0, backfaceVisibility: 'hidden',
