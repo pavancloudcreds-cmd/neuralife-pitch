@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import SpecSheetModal from '../components/SpecSheetModal';
 
 interface SceneProps { onNext: () => void; onPrev: () => void; }
 
@@ -25,27 +26,31 @@ const SPECS = [
   },
   {
     label: 'Stylus (EMR)', icon: '✒️', highlight: '4096 pressure levels',
-    detail: '200Hz report rate\nTilt + azimuth sensing\nNo battery — powered by pad\nNever runs out. Never needs charging.',
+    detail: '200Hz report rate · 14ms latency\nTwo-end pen: nib = write,\nflat end = erase, +button = scroll\nBattery-free — induction powered',
   },
   {
-    label: 'Processor', icon: '⚡', highlight: 'ARM Cortex-A55',
-    detail: 'Quad-core 2.0GHz\n4 GB LPDDR4 RAM\n32 GB eMMC storage\nAI models: 120 MB reserved',
+    label: 'Processor', icon: '⚡', highlight: 'Rockchip RK3566',
+    detail: 'Quad-core Cortex-A55 1.8GHz\nMali-G52 GPU · 0.8–1.0 TOPS NPU\n4 GB LPDDR4 · 32 GB eMMC 5.1\nAlready ships in production E-Ink Android tablets',
   },
   {
-    label: 'Connectivity', icon: '📡', highlight: 'WiFi Only — by design',
-    detail: 'No cellular. No distraction.\n802.11ac WiFi · BLE 5.0\nGPS fleet tracking\nUSB-C · Pogo pin dock',
+    label: 'Connectivity', icon: '📡', highlight: 'WiFi Only — no SIM, ever',
+    detail: 'No cellular. No distraction.\n802.11ac WiFi · BLE 5.0\nGNSS + LoRa (SX1262) for recovery\nUSB-C · no SD, no SIM tray',
+  },
+  {
+    label: 'Rear Camera', icon: '📷', highlight: 'Autofocus, 5–8MP class',
+    detail: 'Scan printed/handwritten notes\nOn-device OCR — separate from HWR-1\n"Scan Notes" flow only, no gallery\nImages not retained long-term',
   },
   {
     label: 'AI Engine', icon: '🧠', highlight: 'On-device inference',
-    detail: 'HWR-1-S: handwriting recognition\nGAP-1: gap analysis\nHDE: intelligent hint engine\nAll runs offline. No cloud needed.',
+    detail: 'HWR-1: handwriting recognition\nGAP-1: gap analysis\nHDE: intelligent hint engine\nAll runs offline. No cloud needed.',
   },
   {
-    label: 'Battery', icon: '🔋', highlight: '2–3 weeks typical use',
-    detail: 'E-Ink uses power only when\ndisplay changes — not while static\nFull school day on 2% battery\nOTA updates at 2 AM silently',
+    label: 'Battery', icon: '🔋', highlight: '6,200mAh · 2–3 weeks use',
+    detail: 'E-Ink uses power only when\ndisplay changes — not while static\nUSB-C 18W fast charge, ~3.5hr full\n500 cycles to 80% · OTA at 2 AM',
   },
   {
-    label: 'Build', icon: '🛡️', highlight: 'Military-grade durability',
-    detail: 'Anthracite aluminum chassis\nTPU hexagonal corner bumpers\nMatte nano-texture surface\nDrop tested · 360g weight',
+    label: 'Build', icon: '🛡️', highlight: 'MIL-STD-810G durability',
+    detail: 'PC + glass-fibre back\n6000-series aluminium frame\nIP52 · 1.2–1.5m drop rated\nUSB-C rated 10,000 insertion cycles',
   },
 ];
 
@@ -73,10 +78,10 @@ const AI_MODELS = [
 ];
 
 const KEY_STATS = [
-  { value: '10.3"', label: 'E-Ink HD'   },
-  { value: '4096',  label: 'EMR Levels' },
-  { value: '3 AI',  label: 'On-device'  },
-  { value: '2–3wk', label: 'Battery'    },
+  { value: '10.3"',  label: 'E-Ink HD'   },
+  { value: '4096',   label: 'EMR Levels' },
+  { value: '4 AI',   label: 'On-device'  },
+  { value: '6,200mAh', label: 'Battery'  },
 ];
 
 type ViewTab = 'combined' | 'front' | 'back';
@@ -92,6 +97,7 @@ export default function Scene1Device({ onNext: _onNext }: SceneProps) {
   const [activeSpec,  setActiveSpec]  = useState(0);
   const [activeModel, setActiveModel] = useState(0);
   const [view,        setView]        = useState<ViewTab>('combined');
+  const [showSpecSheet, setShowSpecSheet] = useState(false);
 
   const spec    = SPECS[activeSpec];
   const model   = AI_MODELS[activeModel];
@@ -201,20 +207,32 @@ export default function Scene1Device({ onNext: _onNext }: SceneProps) {
                 }}>Purpose-built for Indian classrooms</div>
               </div>
 
-              {/* View tabs */}
-              <div style={{
-                display: 'flex', background: T.side,
-                border: `1px solid ${T.border}`, borderRadius: 24, padding: 3, gap: 2,
-              }}>
-                {VIEW_TABS.map(t => (
-                  <button key={t.id} onClick={() => setView(t.id)} style={{
-                    padding: '5px 16px', borderRadius: 20, border: 'none',
-                    cursor: 'pointer', transition: 'all 0.2s',
-                    background: view === t.id ? T.tealVib : 'transparent',
-                    color: view === t.id ? '#ffffff' : T.txt2,
-                    fontFamily: "'Poppins', sans-serif", fontSize: 12, fontWeight: 600,
-                  }}>{t.label}</button>
-                ))}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                {/* View tabs */}
+                <div style={{
+                  display: 'flex', background: T.side,
+                  border: `1px solid ${T.border}`, borderRadius: 24, padding: 3, gap: 2,
+                }}>
+                  {VIEW_TABS.map(t => (
+                    <button key={t.id} onClick={() => setView(t.id)} style={{
+                      padding: '5px 16px', borderRadius: 20, border: 'none',
+                      cursor: 'pointer', transition: 'all 0.2s',
+                      background: view === t.id ? T.tealVib : 'transparent',
+                      color: view === t.id ? '#ffffff' : T.txt2,
+                      fontFamily: "'Poppins', sans-serif", fontSize: 12, fontWeight: 600,
+                    }}>{t.label}</button>
+                  ))}
+                </div>
+
+                {/* Full spec sheet / ODM RFQ */}
+                <button onClick={() => setShowSpecSheet(true)} style={{
+                  display: 'flex', alignItems: 'center', gap: 6,
+                  padding: '7px 16px', borderRadius: 24,
+                  border: `1px solid ${T.tealVib}`, background: T.tealLight,
+                  color: T.teal, cursor: 'pointer',
+                  fontFamily: "'Poppins', sans-serif", fontSize: 12, fontWeight: 600,
+                  whiteSpace: 'nowrap',
+                }}>📋 Full Spec Sheet · ODM RFQ</button>
               </div>
             </div>
 
@@ -342,6 +360,8 @@ export default function Scene1Device({ onNext: _onNext }: SceneProps) {
         </div>
 
       </div>
+
+      <SpecSheetModal open={showSpecSheet} onClose={() => setShowSpecSheet(false)} />
     </>
   );
 }
