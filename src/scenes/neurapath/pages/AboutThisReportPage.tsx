@@ -1,8 +1,9 @@
 import { NP, printAdjust } from '../tokens';
-import { goldRule } from './shared';
+import { bookAsset, goldRule } from './shared';
 
 interface Props {
   forPrint?: boolean;
+  logoSrc?: string;
 }
 
 const TRACKED_ROWS: [string, string][] = [
@@ -14,7 +15,7 @@ const TRACKED_ROWS: [string, string][] = [
   ['NeuraCoins (engagement)', 'Every learning session logged'],
 ];
 
-export default function AboutThisReportPage({ forPrint }: Props) {
+export default function AboutThisReportPage({ forPrint, logoSrc }: Props) {
   return (
     <div style={{
       width: NP.PAGE_W, height: NP.PAGE_H,
@@ -25,15 +26,13 @@ export default function AboutThisReportPage({ forPrint }: Props) {
       padding: '36px 32px',
       ...printAdjust(forPrint),
     }}>
-      {/* Top: monogram */}
-      <div style={{
-        width: 44, height: 44, borderRadius: '50%', border: `2px solid ${NP.gold}`,
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        fontFamily: "'Poppins', sans-serif", fontWeight: 700, fontSize: 16, color: NP.gold,
-        margin: '0 auto 24px',
-      }}>
-        NL
-      </div>
+      {/* Top: logo mark */}
+      <img
+        src={logoSrc ?? bookAsset('neuralife-logo.png')}
+        alt="NeuraLife"
+        width={44} height={44}
+        style={{ display: 'block', margin: '0 auto 24px' }}
+      />
 
       {/* Title */}
       <div style={{

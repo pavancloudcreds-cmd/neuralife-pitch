@@ -1,13 +1,14 @@
 import type { DemoStudent } from '../demoData';
 import { NP, printAdjust } from '../tokens';
-import { goldRule } from './shared';
+import { bookAsset, goldRule } from './shared';
 
 interface Props {
   student: DemoStudent;
   forPrint?: boolean;
+  logoSrc?: string;
 }
 
-export default function PromisePage({ student, forPrint }: Props) {
+export default function PromisePage({ student, forPrint, logoSrc }: Props) {
   return (
     <div style={{
       width: NP.PAGE_W, height: NP.PAGE_H,
@@ -20,14 +21,13 @@ export default function PromisePage({ student, forPrint }: Props) {
       padding: '48px 40px',
       ...printAdjust(forPrint),
     }}>
-      {/* Top: monogram */}
-      <div style={{
-        width: 44, height: 44, borderRadius: '50%', border: `2px solid ${NP.gold}`,
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        fontFamily: "'Poppins', sans-serif", fontWeight: 700, fontSize: 16, color: NP.gold,
-      }}>
-        NL
-      </div>
+      {/* Top: logo mark */}
+      <img
+        src={logoSrc ?? bookAsset('neuralife-logo.png')}
+        alt="NeuraLife"
+        width={44} height={44}
+        style={{ display: 'block' }}
+      />
 
       {/* Center */}
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', textAlign: 'center' }}>

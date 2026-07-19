@@ -7,11 +7,7 @@ interface Props {
   student: DemoStudent;
   forPrint?: boolean;
   scholarSvg?: string;
-}
-
-function initials(fullName: string) {
-  const parts = fullName.split(' ').filter(Boolean);
-  return (parts[0]?.[0] ?? '') + (parts[1]?.[0] ?? '');
+  photoSrc?: string;
 }
 
 const DETAIL_ROWS = (s: DemoStudent) => [
@@ -24,7 +20,7 @@ const DETAIL_ROWS = (s: DemoStudent) => [
   ['DOB', s.dob],
 ];
 
-export default function StudentProfilePage({ student, forPrint, scholarSvg }: Props) {
+export default function StudentProfilePage({ student, forPrint, scholarSvg, photoSrc }: Props) {
   const fetchedSvg = useSVGInline(bookAsset('pose1-seated.svg'), '#1A2332', 'none');
   const svgContent = scholarSvg ?? fetchedSvg;
 
@@ -132,12 +128,14 @@ export default function StudentProfilePage({ student, forPrint, scholarSvg }: Pr
         <div style={{ width: '45%', display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
           <div style={{
             width: 80, height: 96, border: `2px solid ${NP.gold}`, borderRadius: 4,
-            background: '#F1F5F9', display: 'flex', alignItems: 'center', justifyContent: 'center',
-            marginBottom: 8,
+            overflow: 'hidden', marginBottom: 8,
           }}>
-            <span style={{ fontFamily: "'Playfair Display', serif", fontSize: 28, color: NP.ink }}>
-              {initials(student.fullName)}
-            </span>
+            <img
+              src={photoSrc ?? bookAsset('student-pass-photo.jpg')}
+              alt={student.fullName}
+              width={80} height={96}
+              style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+            />
           </div>
           <div style={{
             fontFamily: "'Lora', serif", fontStyle: 'italic', fontSize: 8, color: NP.muted, marginBottom: 10,

@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { NP } from './neurapath/tokens';
 import { DEMO_STUDENT } from './neurapath/demoData';
 import { drilldownState } from './neurapath/drilldownState';
+import { SPREAD_PAIRS } from './neurapath/bookStructure';
 import CoverPage from './neurapath/pages/CoverPage';
 import PromisePage from './neurapath/pages/PromisePage';
 import StudentProfilePage from './neurapath/pages/StudentProfilePage';
@@ -159,8 +160,8 @@ const isEdgePage = (i: number) => i === 0;
 // page's sheet, not as their own standalone recto. When turning the page,
 // they must appear on the LEFT (verso) of the spread, paired with the
 // page that follows them on the RIGHT (recto) — not alone on the right
-// like a normal page. Maps verso index -> recto index.
-const SPREAD_PAIRS: Record<number, number> = { 3: 4, 11: 12, 15: 16 };
+// like a normal page. Maps verso index -> recto index. Shared with the
+// PDF generator (bookStructure.ts) so both stay in sync.
 const RECTO_TO_VERSO: Record<number, number> = Object.fromEntries(
   Object.entries(SPREAD_PAIRS).map(([verso, recto]) => [recto, Number(verso)])
 );
@@ -628,7 +629,7 @@ export default function Scene2NeuraPath(_props: SceneProps) {
               ⬇ Download PDF
             </a>
             <div style={{ display: 'flex', justifyContent: 'center', gap: 6, paddingBottom: 12, flexWrap: 'wrap' }}>
-              {['Print for farewell ceremony', 'A5 · 17 pages'].map(t => (
+              {['Print for farewell ceremony', 'A5 · 17 pages · duplex-ready'].map(t => (
                 <span key={t} style={{ fontFamily: "'Poppins', sans-serif", fontSize: 8, color: NP.faint }}>
                   {t}
                 </span>

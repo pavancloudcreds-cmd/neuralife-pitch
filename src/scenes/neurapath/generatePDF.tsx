@@ -4,6 +4,12 @@
 // GitHub Pages (static hosting only). Instead this pre-renders the whole
 // 17-page book to a static PDF at build/deploy time; the in-browser
 // "Download PDF" button just links to that pre-built file.
+//
+// The output is imposed for duplex printing, not just the 17 pages back
+// to back: see bookStructure.ts for which pages share a physical leaf and
+// which get a blank back. Hand this file to a digital press as-is with
+// "duplex, flip on long edge" and the front/back of every sheet lines up
+// correctly — no separate imposition step needed.
 import puppeteer from 'puppeteer';
 import path from 'path';
 import fs from 'fs';
@@ -15,6 +21,8 @@ import { PDFDocument } from 'pdf-lib';
 import { DEMO_STUDENT } from './demoData';
 import { NP } from './tokens';
 import { processSvgOutline } from './svgOutline';
+import { buildPrintLeaves } from './bookStructure';
+import type { PageId } from './bookStructure';
 
 import CoverPage from './pages/CoverPage';
 import PromisePage from './pages/PromisePage';
@@ -57,6 +65,8 @@ const scholarAmber = processSvgOutline(POSE2_RAW, '#92400E', 'none');
 const scholarWhite = processSvgOutline(POSE3_RAW, '#FFFFFF', '#FFFFFF');
 
 const QR_DATA_URI = readAssetBase64DataUri('print-assets/qr.png', 'image/png');
+const LOGO_DATA_URI = readAssetBase64DataUri('book/neuralife-logo.png', 'image/png');
+const PHOTO_DATA_URI = readAssetBase64DataUri('book/student-pass-photo.jpg', 'image/jpeg');
 
 const NOTO_TELUGU_BASE64 = fs.readFileSync(
   path.join(PUBLIC, 'fonts', 'NotoSansTelugu-Regular.ttf')
@@ -75,25 +85,44 @@ const GOOGLE_FONTS_LINK =
   'https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,800;1,700' +
   '&family=Lora:ital,wght@0,400;0,600;1,400&family=Poppins:wght@400;600;700;800&display=swap';
 
-const PAGE_DEFINITIONS: { id: string; element: ReactElement }[] = [
-  { id: 'cover',           element: <CoverPage student={DEMO_STUDENT} forPrint scholarSvg={scholarGold} /> },
-  { id: 'promise',         element: <PromisePage student={DEMO_STUDENT} forPrint /> },
-  { id: 'profile',         element: <StudentProfilePage student={DEMO_STUDENT} forPrint scholarSvg={scholarNavy} /> },
-  { id: 'about-report',    element: <AboutThisReportPage forPrint /> },
-  { id: 'career',          element: <CareerPage student={DEMO_STUDENT} forPrint /> },
-  { id: 'analysis',        element: <AnalysisPage student={DEMO_STUDENT} forPrint /> },
-  { id: 'class7',          element: <ClassPage student={DEMO_STUDENT} classYear={7} forPrint /> },
-  { id: 'class8',          element: <ClassPage student={DEMO_STUDENT} classYear={8} forPrint /> },
-  { id: 'class9',          element: <ClassPage student={DEMO_STUDENT} classYear={9} forPrint /> },
-  { id: 'class10',         element: <ClassPage student={DEMO_STUDENT} classYear={10} forPrint /> },
-  { id: 'journey',         element: <JourneyPage student={DEMO_STUDENT} forPrint scholarSvg={scholarAmber} /> },
-  { id: 'note-for-arjun',  element: <NoteForArjunPage forPrint /> },
-  { id: 'feedback-en',     element: <FeedbackEnglishPage student={DEMO_STUDENT} forPrint /> },
-  { id: 'feedback-te',     element: <FeedbackTeluguPage student={DEMO_STUDENT} forPrint /> },
-  { id: 'allthebest',      element: <AllTheBestPage student={DEMO_STUDENT} forPrint scholarSvg={scholarWhite} /> },
-  { id: 'neura-cert',      element: <NeuraIDCertificatePage student={DEMO_STUDENT} forPrint scholarSvg={scholarNavy} /> },
-  { id: 'backcover',       element: <BackCoverPage forPrint qrSrc={QR_DATA_URI} /> },
-];
+const PAGE_ELEMENTS: Record<PageId, ReactElement> = {
+  cover:           <CoverPage student={DEMO_STUDENT} forPrint scholarSvg={scholarGold} />,
+  promise:         <PromisePage student={DEMO_STUDENT} forPrint logoSrc={LOGO_DATA_URI} />,
+  profile:         <StudentProfilePage student={DEMO_STUDENT} forPrint scholarSvg={scholarNavy} photoSrc={PHOTO_DATA_URI} />,
+  'about-report':  <AboutThisReportPage forPrint logoSrc={LOGO_DATA_URI} />,
+  career:          <CareerPage student={DEMO_STUDENT} forPrint />,
+  analysis:        <AnalysisPage student={DEMO_STUDENT} forPrint />,
+  class7:          <ClassPage student={DEMO_STUDENT} classYear={7} forPrint />,
+  class8:          <ClassPage student={DEMO_STUDENT} classYear={8} forPrint />,
+  class9:          <ClassPage student={DEMO_STUDENT} classYear={9} forPrint />,
+  class10:         <ClassPage student={DEMO_STUDENT} classYear={10} forPrint />,
+  journey:         <JourneyPage student={DEMO_STUDENT} forPrint scholarSvg={scholarAmber} />,
+  'note-for-arjun': <NoteForArjunPage forPrint />,
+  'feedback-en':   <FeedbackEnglishPage student={DEMO_STUDENT} forPrint />,
+  'feedback-te':   <FeedbackTeluguPage student={DEMO_STUDENT} forPrint />,
+  allthebest:      <AllTheBestPage student={DEMO_STUDENT} forPrint scholarSvg={scholarWhite} />,
+  'neura-cert':    <NeuraIDCertificatePage student={DEMO_STUDENT} forPrint scholarSvg={scholarNavy} logoSrc={LOGO_DATA_URI} />,
+  backcover:       <BackCoverPage forPrint qrSrc={QR_DATA_URI} />,
+};
+
+// A physically blank leaf side — no ink, just paper — rendered at the same
+// trim size so the PDF page count/geometry lines up with every other page.
+function BlankPage() {
+  return <div style={{ width: NP.PAGE_W, height: NP.PAGE_H, background: '#FFFFFF' }} />;
+}
+
+// Imposes the 17 content pages onto physical leaves (see bookStructure.ts):
+// most pages get their own leaf with a blank back; a few page pairs share
+// one leaf front/back. Expanding to leaf.front, leaf.back for every leaf
+// produces a duplex-ready page sequence — send straight to a digital press
+// with "duplex, flip on long edge" and the front/back of every sheet lines
+// up correctly, blanks included, with no manual imposition step needed.
+const PAGE_DEFINITIONS: { id: string; element: ReactElement }[] = buildPrintLeaves().flatMap(leaf => [
+  { id: `${leaf.front}-front`, element: PAGE_ELEMENTS[leaf.front] },
+  leaf.back
+    ? { id: `${leaf.back}-back`, element: PAGE_ELEMENTS[leaf.back] }
+    : { id: `${leaf.front}-blank-back`, element: <BlankPage /> },
+]);
 
 // Page components render at a fixed NP.PAGE_W x NP.PAGE_H (420x594 CSS px —
 // shared with the on-screen viewer), but the PDF page itself is physically
@@ -192,7 +221,10 @@ export async function generateNeuraPathPDF(): Promise<Buffer> {
 }
 
 async function main() {
-  console.log(`Generating NeuraPath PDF (${PAGE_DEFINITIONS.length} pages)...`);
+  console.log(
+    `Generating NeuraPath PDF — 17 content pages imposed onto ` +
+    `${PAGE_DEFINITIONS.length / 2} duplex leaves (${PAGE_DEFINITIONS.length} PDF pages, blanks included)...`
+  );
   const pdfBytes = await generateNeuraPathPDF();
   const outDir = path.join(PUBLIC, 'downloads');
   fs.mkdirSync(outDir, { recursive: true });

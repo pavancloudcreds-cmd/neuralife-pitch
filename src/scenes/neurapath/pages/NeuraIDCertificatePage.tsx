@@ -7,6 +7,7 @@ interface Props {
   student: DemoStudent;
   forPrint?: boolean;
   scholarSvg?: string;
+  logoSrc?: string;
 }
 
 const SCHOOL_ROWS: [string, string][] = [
@@ -16,7 +17,7 @@ const SCHOOL_ROWS: [string, string][] = [
   ['NeuraLife ID', 'NID-2025-AP-084291'],
 ];
 
-export default function NeuraIDCertificatePage({ student, forPrint, scholarSvg }: Props) {
+export default function NeuraIDCertificatePage({ student, forPrint, scholarSvg, logoSrc }: Props) {
   const fetchedSvg = useSVGInline(bookAsset('pose1-seated.svg'), '#1A2332', 'none');
   const svgContent = scholarSvg ?? fetchedSvg;
 
@@ -117,13 +118,12 @@ export default function NeuraIDCertificatePage({ student, forPrint, scholarSvg }
           <span style={{ fontFamily: "'Poppins', sans-serif", fontSize: 7, color: '#94A3B8' }}>
             Issued by NeuraLife
           </span>
-          <div style={{
-            width: 24, height: 24, borderRadius: '50%', border: `1.5px solid ${NP.gold}`,
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontFamily: "'Poppins', sans-serif", fontWeight: 700, fontSize: 9, color: NP.gold,
-          }}>
-            NL
-          </div>
+          <img
+            src={logoSrc ?? bookAsset('neuralife-logo.png')}
+            alt="NeuraLife"
+            width={24} height={24}
+            style={{ display: 'block' }}
+          />
         </div>
       </div>
     </div>
