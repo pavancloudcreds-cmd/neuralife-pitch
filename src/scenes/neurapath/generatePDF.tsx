@@ -66,7 +66,7 @@ const scholarWhite = processSvgOutline(POSE3_RAW, '#FFFFFF', '#FFFFFF');
 
 const QR_DATA_URI = readAssetBase64DataUri('print-assets/qr.png', 'image/png');
 const LOGO_DATA_URI = readAssetBase64DataUri('book/neuralife-logo.png', 'image/png');
-const PHOTO_DATA_URI = readAssetBase64DataUri('book/student-pass-photo.jpg', 'image/jpeg');
+const PHOTO_DATA_URI = readAssetBase64DataUri('book/student-pass-photo.png', 'image/png');
 
 const NOTO_TELUGU_BASE64 = fs.readFileSync(
   path.join(PUBLIC, 'fonts', 'NotoSansTelugu-Regular.ttf')

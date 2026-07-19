@@ -2,6 +2,7 @@ import type { DemoStudent } from '../demoData';
 import { NP, printAdjust } from '../tokens';
 import { bookAsset, goldRule } from './shared';
 import { useSVGInline } from '../useSVGInline';
+import SchoolStamp from './SchoolStamp';
 
 interface Props {
   student: DemoStudent;
@@ -46,13 +47,20 @@ export default function StudentProfilePage({ student, forPrint, scholarSvg, phot
         background: '#F8F7F0', borderBottom: '1px solid rgba(212,168,67,0.3)',
         padding: '12px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
       }}>
-        <div style={{
-          width: 28, height: 28, borderRadius: '50%', background: NP.ink, color: 'white',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          fontFamily: "'Poppins', sans-serif", fontWeight: 700, fontSize: 8, flexShrink: 0,
-        }}>
-          VHS
-        </div>
+        <svg width="28" height="32" viewBox="0 0 28 32" style={{ flexShrink: 0 }} aria-label="School crest">
+          <path
+            d="M14 1 L26 5.2 V15.5 C26 23.5 20.5 28.5 14 31 C7.5 28.5 2 23.5 2 15.5 V5.2 Z"
+            fill={NP.ink} stroke={NP.gold} strokeWidth="1.1"
+          />
+          <path
+            d="M14 10 C11.3 8.6 8.3 8.6 6.2 9.6 V15 C8.3 14 11.3 14 14 15.5 C16.7 14 19.7 14 21.8 15 V9.6 C19.7 8.6 16.7 8.6 14 10 Z"
+            fill="none" stroke={NP.gold} strokeWidth="0.9" strokeLinejoin="round"
+          />
+          <line x1="14" y1="10" x2="14" y2="15.5" stroke={NP.gold} strokeWidth="0.9" />
+          <text x="14" y="24.5" textAnchor="middle" fontFamily="'Poppins', sans-serif" fontWeight={700} fontSize="7" fill={NP.gold} letterSpacing="0.5">
+            VHS
+          </text>
+        </svg>
 
         <div style={{ textAlign: 'center', flex: 1 }}>
           <div style={{
@@ -66,13 +74,7 @@ export default function StudentProfilePage({ student, forPrint, scholarSvg, phot
           </div>
         </div>
 
-        <div style={{
-          width: 40, height: 40, borderRadius: '50%', border: '1.5px dashed rgba(212,168,67,0.5)',
-          display: 'flex', alignItems: 'center', justifyContent: 'center', textAlign: 'center',
-          fontFamily: "'Poppins', sans-serif", fontSize: 6, color: '#94A3B8', lineHeight: 1.3, flexShrink: 0,
-        }}>
-          School<br />Stamp
-        </div>
+        <SchoolStamp size={40} />
       </div>
 
       {/* Main body */}
@@ -131,10 +133,10 @@ export default function StudentProfilePage({ student, forPrint, scholarSvg, phot
             overflow: 'hidden', marginBottom: 8,
           }}>
             <img
-              src={photoSrc ?? bookAsset('student-pass-photo.jpg')}
+              src={photoSrc ?? bookAsset('student-pass-photo.png')}
               alt={student.fullName}
               width={80} height={96}
-              style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+              style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: '50% 12%', display: 'block' }}
             />
           </div>
           <div style={{

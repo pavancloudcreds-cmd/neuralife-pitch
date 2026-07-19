@@ -2,6 +2,7 @@ import type { DemoStudent } from '../demoData';
 import { NP, goldTextStyle, printAdjust } from '../tokens';
 import { bookAsset, goldRule } from './shared';
 import { useSVGInline } from '../useSVGInline';
+import SchoolStamp from './SchoolStamp';
 
 interface Props {
   student: DemoStudent;
@@ -100,14 +101,7 @@ export default function NeuraIDCertificatePage({ student, forPrint, scholarSvg, 
 
         {/* Right — school stamp */}
         <div style={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
-          <div style={{
-            width: 50, height: 50, borderRadius: '50%', border: '1.5px dashed rgba(212,168,67,0.5)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center', textAlign: 'center',
-          }}>
-            <span style={{ fontFamily: "'Poppins', sans-serif", fontSize: 7, color: '#94A3B8', lineHeight: 1.3 }}>
-              Official<br />School<br />Stamp
-            </span>
-          </div>
+          <SchoolStamp size={50} />
         </div>
       </div>
 
