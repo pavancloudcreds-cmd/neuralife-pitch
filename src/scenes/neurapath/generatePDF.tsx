@@ -83,7 +83,8 @@ const FONTS_CSS = `
 
 const GOOGLE_FONTS_LINK =
   'https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,800;1,700' +
-  '&family=Lora:ital,wght@0,400;0,600;1,400&family=Poppins:wght@400;600;700;800&display=swap';
+  '&family=Lora:ital,wght@0,400;0,600;1,400&family=Poppins:wght@400;600;700;800' +
+  '&family=Dancing+Script:wght@500;700&display=swap';
 
 const PAGE_ELEMENTS: Record<PageId, ReactElement> = {
   cover:           <CoverPage student={DEMO_STUDENT} forPrint scholarSvg={scholarGold} />,
@@ -118,7 +119,9 @@ function BlankPage() {
 // with "duplex, flip on long edge" and the front/back of every sheet lines
 // up correctly, blanks included, with no manual imposition step needed.
 const PAGE_DEFINITIONS: { id: string; element: ReactElement }[] = buildPrintLeaves().flatMap(leaf => [
-  { id: `${leaf.front}-front`, element: PAGE_ELEMENTS[leaf.front] },
+  leaf.front
+    ? { id: `${leaf.front}-front`, element: PAGE_ELEMENTS[leaf.front] }
+    : { id: `${leaf.back}-blank-front`, element: <BlankPage /> },
   leaf.back
     ? { id: `${leaf.back}-back`, element: PAGE_ELEMENTS[leaf.back] }
     : { id: `${leaf.front}-blank-back`, element: <BlankPage /> },

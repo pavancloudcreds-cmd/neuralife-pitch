@@ -90,7 +90,13 @@ export default function NeuraIDCertificatePage({ student, forPrint, scholarSvg, 
       <div style={{ marginTop: 'auto', width: '100%', display: 'flex', alignItems: 'center' }}>
         {/* Left — principal signature */}
         <div style={{ flex: 1, textAlign: 'center' }}>
-          <div style={{ width: 80, margin: '0 auto', borderTop: '1px solid #1A2332' }} />
+          <div style={{
+            fontFamily: "'Dancing Script', cursive", fontWeight: 700, fontSize: 22,
+            color: '#1A2332', transform: 'rotate(-2deg)', lineHeight: 1,
+          }}>
+            K. Ramesh Babu
+          </div>
+          <div style={{ width: 80, margin: '2px auto 0', borderTop: '1px solid #1A2332' }} />
           <div style={{ fontFamily: "'Poppins', sans-serif", fontSize: 7, color: '#94A3B8', marginTop: 4 }}>
             Principal's Signature
           </div>
